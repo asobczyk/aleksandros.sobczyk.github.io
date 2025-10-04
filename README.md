@@ -1,2 +1,2 @@
-# aleksandros.sobczyk-github.io
+# asobczyk.github.io
 Personal website
