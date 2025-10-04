@@ -31,7 +31,10 @@ github_username:  asobczyk
 # Build settings
 theme: minima
 plugins:
-  - jekyll-feed
+#  - jekyll-feed
+minima:
+  skin: dark
+
 
 # Exclude from processing.
 # The following items will not be processed, by default.
