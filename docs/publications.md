@@ -1,4 +1,8 @@
-### Publications
+---
+layout: page
+title: Publications
+permalink: /publications/
+---
 
 13. Sobczyk, Aleksandros, Giuseppe Sorrentino, and Anastasios Zouzias. 2025.
 “Segmented Operations Using Matrix Multiplications.” *arXiv Preprint
