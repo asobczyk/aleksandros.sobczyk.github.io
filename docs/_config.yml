@@ -23,7 +23,7 @@ email: {mylastname}alek@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Researcher at Huawei Zurich Research Center (2024-today).
   Previously at IBM Zurich Research Laboratory (2017-2024) and ETH Zurich (2020-2024).
-baseurl: "/aleksandros.sobczyk.github.io/" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://aleksandros.sobczyk.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
 github_username:  asobczyk
