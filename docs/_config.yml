@@ -28,6 +28,7 @@ url: "https://asobczyk.github.io" # the base hostname & protocol for your site, 
 # twitter_username: jekyllrb
 github_username:  asobczyk
 linkedin_username: aleksandros-sobczyk
+orcid_username: 0000-0002-1602-8329
 
 # Build settings
 theme: minima
