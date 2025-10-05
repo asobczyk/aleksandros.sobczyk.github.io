@@ -60,3 +60,4 @@ Gallopoulos, and Ahmed H Sameh. 2015. “A Direct Tridiagonal Solver Based
 on Givens Rotations for Gpu Architectures.” *Parallel Computing* 49:
 101–16.
 
+{: reversed="reversed"}
