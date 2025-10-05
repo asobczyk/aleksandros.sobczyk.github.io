@@ -77,25 +77,25 @@ minima:
 #       * title    Tooltip rendered on hovering over icon.
 #       * icon     Font Awesome icon id. `github` corresponds to `fa-github`.
 #       * url      Full URL of social profile.
-  social_links:
-    - title: GitHub
-      icon: github
-      url: "https://github.com/asobczyk"
-    - title: LinkedIn
-      icon: linkedin
-      url: "https://linkedin.com/aleksandros-sobczyk"
-    - title: ORCID
-      icon: orcid
-      url: "https://orcid.org/0000-0002-1602-8329"
-    - title: Scholar
-      icon: google-scholar
-      url: "https://scholar.google.com/citations?user=NG0qB0MAAAAJ&hl=en"
-    - title: Bluesky
-      icon: square-bluesky
-      url: "https://bsky.app/profile/asobczyk.bsky.social"
-    - title: X
-      icon: x-twitter
-      url: "https://x.com/AleksandrosSob1"  
+  # social_links:
+  #   - title: GitHub
+  #     icon: github
+  #     url: "https://github.com/asobczyk"
+  #   - title: LinkedIn
+  #     icon: linkedin
+  #     url: "https://linkedin.com/aleksandros-sobczyk"
+  #   - title: ORCID
+  #     icon: orcid
+  #     url: "https://orcid.org/0000-0002-1602-8329"
+  #   - title: Scholar
+  #     icon: google-scholar
+  #     url: "https://scholar.google.com/citations?user=NG0qB0MAAAAJ&hl=en"
+  #   - title: Bluesky
+  #     icon: square-bluesky
+  #     url: "https://bsky.app/profile/asobczyk.bsky.social"
+  #   - title: X
+  #     icon: x-twitter
+  #     url: "https://x.com/AleksandrosSob1"  
 #     - title: Jekyll at X (formerly Twitter)
 #       icon: x-twitter
 #       url: "https://x.com/jekyllrb"
