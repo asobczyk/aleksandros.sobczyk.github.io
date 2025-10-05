@@ -3,12 +3,24 @@ layout: page
 title: Publications
 permalink: /publications/
 ---
-<ul>
+<ol>
 {% for item in site.data.bibliography %}
   <li>
-    <a href="{{ item.Link }}">
-      {{ item.Title }}
-    </a>
+    {{ item.Title }}
+    <ul>
+      <li>
+        {{ item.Authors }}
+      </li>
+      <li>
+        {{ item.Publication }}, {{ item.Year }}
+      </li>
+      <li>
+        Link: 
+        <a href="{{ item.Link }}">
+          {{ item.Link }}
+        </a>
+      </li>
+    </ul>
   </li>
 {% endfor %}
-</ul>
+</ol>
