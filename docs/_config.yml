@@ -9,9 +9,9 @@ title: Aleksandros Sobczyk
 #
 # The `>` after `description:` means to ignore line-breaks until next key. If
 #   you wish to omit the line-break after the end of text, use `>-` instead.
-description: >- # this means to ignore newlines until "baseurl:"
-  Researcher at Huawei Zurich Research Center.
-  
+# description: >- # this means to ignore newlines until "baseurl:"
+#   Researcher at Huawei Zurich Research Center.
+
 # Build settings
 # --------------
 #
