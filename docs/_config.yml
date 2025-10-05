@@ -24,7 +24,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 #   bypassing a Gemfile, use the following setting instead.
 #   It is best that you lock to a particular commit and update if uptream changes
 #   do not affect your site adversely.
-remote_theme: jekyll/minima@b3385fe
+remote_theme: jekyll/minima
 
 #
 # Minima requires the following plugins:
