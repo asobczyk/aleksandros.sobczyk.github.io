@@ -1,68 +1,45 @@
-- Authors: 'Venetis, Ioannis E; Kouris, Alexandros; Sobczyk, Alexandros; Gallopoulos,
-    Efstratios; Sameh, Ahmed H; '
+- Authors: 'Born, Jannis; Skogh, Filip; Rhrissorrakrai, Kahn; Utro, Filippo; Wagner,
+    Nico; Sobczyk, Aleksandros; '
   Number: ''
-  Pages: 101-116
-  Publication: Parallel Computing
-  Publisher: Elsevier
-  Title: A direct tridiagonal solver based on Givens rotations for GPU architectures
-  Volume: '49'
-  Year: '2015'
-  Link: 'https://doi.org/10.1016/j.parco.2015.03.008'
-- Authors: 'Venetis, Ioannis E; Sobczyk, Alexandros; Kouris, Alexandros; Nakos, Alexandros;
-    Nikoloutsakos, Nikolaos; Gallopoulos, Efstratios; '
+  Pages: ''
+  Publication: Advances in Neural Information Processing Systems (NeurIPS, spotlight)
+  Publisher: ''
+  Title: Quantum Doubly Stochastic Transformers
+  Volume: '38'
+  Year: '2025'
+  Link: 'https://doi.org/10.48550/arXiv.2504.16275'
+- Authors: 'Carrera Vazquez, Almudena; Sobczyk, Aleksandros; '
   Number: ''
-  Pages: 371-380
-  Publication: 'Parallel Computing: On the Road to Exascale'
-  Publisher: IOS Press
-  Title: 'A general tridiagonal solver for coprocessors: Adapting g-Spike for the
-    Intel Xeon Phi'
+  Pages: ''
+  Publication: arXiv preprint arXiv:2508.21002
+  Publisher: ''
+  Title: Spectral Gaps with Quantum Counting Queries and Oblivious State Preparation
   Volume: ''
-  Year: '2016'
-  Link: 'https://doi.org/10.3233/978-1-61499-621-7-371'
-- Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
-  Number: '3'
-  Pages: 1199-1228
-  Publication: SIAM Journal on Matrix Analysis and Applications
-  Publisher: SIAM
-  Title: Estimating leverage scores via rank revealing methods and randomization
-  Volume: '42'
-  Year: '2021'
-  Link: 'https://doi.org/10.1137/20M1314471'
-- Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
-  Number: '4'
-  Pages: 1-27
-  Publication: ACM Transactions on Mathematical Software
-  Publisher: ACM New York, NY
-  Title: 'pylspack: Parallel Algorithms and Data Structures for Sketching, Column
-    Subset Selection, Regression, and Leverage Scores'
-  Volume: '48'
-  Year: '2022'
-  Link: 'https://doi.org/10.1145/3555370'
-- Authors: 'Sobczyk, Aleksandros; Luisier, Mathieu; '
+  Year: '2025'
+  Link: 'https://doi.org/10.48550/arXiv.2508.21002'
+- Authors: 'Sobczyk, Aleksandros; Sorrentino, Giuseppe; Zouzias, Anastasios; '
   Number: ''
-  Pages: 19357-19369
-  Publication: Advances in Neural Information Processing Systems (NeurIPS 2022)
+  Pages: ''
+  Publication: arXiv preprint arXiv:2506.23906
   Publisher: ''
-  Title: Approximate Euclidean lengths and distances beyond Johnson-Lindenstrauss
-  Volume: '35'
-  Year: '2022'
-  Link: 'https://neurips.cc/virtual/2022/poster/54743'
-- Authors: 'Cardinale, Antonio; Castrogiovanni, Alessandro; Gaudin, Theophile; Geluykens,
-    Joppe; Laino, Teodoro; Manica, Matteo; Probst, Daniel; Schwaller, Philippe; Sobczyk,
-    Aleksandros; Toniato, Alessandra; '
-  Number: 7/8
-  Pages: 484-488
-  Publication: Chimia
+  Title: Segmented Operations using Matrix Multiplications
+  Volume: ''
+  Year: '2025'
+  Link: 'https://doi.org/10.48550/arXiv.2506.23906'
+- Authors: "Papp, P\xE1l Andr\xE1s; Sobczyk, Aleksandros; Yzelman, Albert-Jan N; "
+  Number: ''
+  Pages: 328-338
+  Publication: 37th ACM Symposium on Parallelism in Algorithms
+    and Architectures (SPAA)
   Publisher: ''
-  Title: 'Fuelling the Digital Chemistry Revolution with Language Models: Sandmeyer
-    Award 2022'
-  Volume: '77'
-  Year: '2023'
-  Link: 'https://doi.org/10.2533/chimia.2023.484'
+  Title: The Impact of Partial Computations on the Red-Blue Pebble Game
+  Volume: ''
+  Year: '2025'
+  Link: 'https://doi.org/10.1145/3694906.3743320'
 - Authors: 'Sobczyk, Aleksandros; '
   Number: ''
   Pages: '131:1-131:21'
-  Publication: Proceedings of the 52nd International Colloquium on Automata, Languages, and Programming (ICALP 2025)
+  Publication: 52nd International Colloquium on Automata, Languages, and Programming (ICALP)
   Publisher: 'Schloss Dagstuhl -- Leibniz-Zentrum f\"ur Informatik'
   Title: Deterministic complexity analysis of Hermitian eigenproblems
   Volume: '334'
@@ -80,47 +57,70 @@
 - Authors: 'Sobczyk, Aleksandros; Mladenovic, Marko; Luisier, Mathieu; '
   Number: ''
   Pages: 19013-19086
-  Publication: Advances in Neural Information Processing Systems (NeurIPS 2024)
+  Publication: Advances in Neural Information Processing Systems (NeurIPS)
   Publisher: ''
   Title: Invariant subspaces and PCA in nearly matrix multiplication time
   Volume: '37'
   Year: '2024'
   Link: 'https://nips.cc/virtual/2024/poster/94800'
-- Authors: 'Born, Jannis; Skogh, Filip; Rhrissorrakrai, Kahn; Utro, Filippo; Wagner,
-    Nico; Sobczyk, Aleksandros; '
-  Number: ''
-  Pages: ''
-  Publication: Advances in Neural Information Processing Systems (NeurIPS 2025, spotlight)
+- Authors: 'Cardinale, Antonio; Castrogiovanni, Alessandro; Gaudin, Theophile; Geluykens,
+    Joppe; Laino, Teodoro; Manica, Matteo; Probst, Daniel; Schwaller, Philippe; Sobczyk,
+    Aleksandros; Toniato, Alessandra; '
+  Number: 7/8
+  Pages: 484-488
+  Publication: Chimia
   Publisher: ''
-  Title: Quantum Doubly Stochastic Transformers
-  Volume: '38'
-  Year: '2025'
-  Link: 'https://doi.org/10.48550/arXiv.2504.16275'
-- Authors: "Papp, P\xE1l Andr\xE1s; Sobczyk, Aleksandros; Yzelman, Albert-Jan N; "
+  Title: 'Fuelling the Digital Chemistry Revolution with Language Models: Sandmeyer
+    Award 2022'
+  Volume: '77'
+  Year: '2023'
+  Link: 'https://doi.org/10.2533/chimia.2023.484'
+- Authors: 'Sobczyk, Aleksandros; Luisier, Mathieu; '
   Number: ''
-  Pages: 328-338
-  Publication: Proceedings of the 37th ACM Symposium on Parallelism in Algorithms
-    and Architectures (SPAA 2025)
+  Pages: 19357-19369
+  Publication: Advances in Neural Information Processing Systems (NeurIPS)
   Publisher: ''
-  Title: The Impact of Partial Computations on the Red-Blue Pebble Game
+  Title: Approximate Euclidean lengths and distances beyond Johnson-Lindenstrauss
+  Volume: '35'
+  Year: '2022'
+  Link: 'https://neurips.cc/virtual/2022/poster/54743'
+- Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
+  Number: '4'
+  Pages: 1-27
+  Publication: ACM Transactions on Mathematical Software
+  Publisher: ACM New York, NY
+  Title: 'pylspack: Parallel Algorithms and Data Structures for Sketching, Column
+    Subset Selection, Regression, and Leverage Scores'
+  Volume: '48'
+  Year: '2022'
+  Link: 'https://doi.org/10.1145/3555370'
+- Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
+  Number: '3'
+  Pages: 1199-1228
+  Publication: SIAM Journal on Matrix Analysis and Applications
+  Publisher: SIAM
+  Title: Estimating leverage scores via rank revealing methods and randomization
+  Volume: '42'
+  Year: '2021'
+  Link: 'https://doi.org/10.1137/20M1314471'
+- Authors: 'Venetis, Ioannis E; Sobczyk, Alexandros; Kouris, Alexandros; Nakos, Alexandros;
+    Nikoloutsakos, Nikolaos; Gallopoulos, Efstratios; '
+  Number: ''
+  Pages: 371-380
+  Publication: 'Parallel Computing: On the Road to Exascale'
+  Publisher: IOS Press
+  Title: 'A general tridiagonal solver for coprocessors: Adapting g-Spike for the
+    Intel Xeon Phi'
   Volume: ''
-  Year: '2025'
-  Link: 'https://doi.org/10.1145/3694906.3743320'
-- Authors: 'Sobczyk, Aleksandros; Sorrentino, Giuseppe; Zouzias, Anastasios; '
+  Year: '2016'
+  Link: 'https://doi.org/10.3233/978-1-61499-621-7-371'
+- Authors: 'Venetis, Ioannis E; Kouris, Alexandros; Sobczyk, Alexandros; Gallopoulos,
+    Efstratios; Sameh, Ahmed H; '
   Number: ''
-  Pages: ''
-  Publication: arXiv preprint arXiv:2506.23906
-  Publisher: ''
-  Title: Segmented Operations using Matrix Multiplications
-  Volume: ''
-  Year: '2025'
-  Link: 'https://doi.org/10.48550/arXiv.2506.23906'
-- Authors: 'Carrera Vazquez, Almudena; Sobczyk, Aleksandros; '
-  Number: ''
-  Pages: ''
-  Publication: arXiv preprint arXiv:2508.21002
-  Publisher: ''
-  Title: Spectral Gaps with Quantum Counting Queries and Oblivious State Preparation
-  Volume: ''
-  Year: '2025'
-  Link: 'https://doi.org/10.48550/arXiv.2508.21002'
+  Pages: 101-116
+  Publication: Parallel Computing
+  Publisher: Elsevier
+  Title: A direct tridiagonal solver based on Givens rotations for GPU architectures
+  Volume: '49'
+  Year: '2015'
+  Link: 'https://doi.org/10.1016/j.parco.2015.03.008'
