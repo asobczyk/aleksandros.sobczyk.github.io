@@ -14,11 +14,25 @@ permalink: /publications/
       <li>
         {{ item.Publication }}, {{ item.Year }}
       </li>
-      <li>
-        Link: 
+      <li> 
         <a href="{{ item.Link }}">
-          {{ item.Link }}
+          Link
         </a>
+        {% if item.Arxiv %}
+        <a href="{{ item.Arxiv }}">
+          Arxiv
+        </a>
+        {% endif %}
+        {% item.Video %}
+        <a href="{{ item.Video }}">
+          Video
+        </a>
+        {% endif %}
+        {% if item.Code %}
+        <a href="{{ item.Code }}">
+          Code
+        </a>
+        {% endif %}
       </li>
     </ul>
   </li>

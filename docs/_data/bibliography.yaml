@@ -8,6 +8,7 @@
   Volume: '38'
   Year: '2025'
   Link: 'https://doi.org/10.48550/arXiv.2504.16275'
+  Arxiv: 'https://arxiv.org/abs/2504.16275'
 - Authors: 'Carrera Vazquez, Almudena; Sobczyk, Aleksandros; '
   Number: ''
   Pages: ''
@@ -16,7 +17,7 @@
   Title: Spectral Gaps with Quantum Counting Queries and Oblivious State Preparation
   Volume: ''
   Year: '2025'
-  Link: 'https://doi.org/10.48550/arXiv.2508.21002'
+  Arxiv: 'https://doi.org/10.48550/arXiv.2508.21002'
 - Authors: 'Sobczyk, Aleksandros; Sorrentino, Giuseppe; Zouzias, Anastasios; '
   Number: ''
   Pages: ''
@@ -25,7 +26,7 @@
   Title: Segmented Operations using Matrix Multiplications
   Volume: ''
   Year: '2025'
-  Link: 'https://doi.org/10.48550/arXiv.2506.23906'
+  Arxiv: 'https://doi.org/10.48550/arXiv.2506.23906'
 - Authors: "Papp, P\xE1l Andr\xE1s; Sobczyk, Aleksandros; Yzelman, Albert-Jan N; "
   Number: ''
   Pages: 328-338
@@ -36,6 +37,7 @@
   Volume: ''
   Year: '2025'
   Link: 'https://doi.org/10.1145/3694906.3743320'
+  Arxiv: 'https://arxiv.org/abs/2506.10854'
 - Authors: 'Sobczyk, Aleksandros; '
   Number: ''
   Pages: '131:1-131:21'
@@ -45,6 +47,7 @@
   Volume: '334'
   Year: '2025'
   Link: 'http://doi.org/10.4230/LIPIcs.ICALP.2025.131'
+  Arxiv: 'https://arxiv.org/abs/2410.21550'
 - Authors: 'Sobczyk, Aleksandros; '
   Number: ''
   Pages: ''
@@ -53,7 +56,7 @@
   Title: I/O complexity and pebble games with partial computations
   Volume: ''
   Year: '2024'
-  Link: 'https://doi.org/10.48550/arXiv.2410.22237'
+  Arxiv: 'https://doi.org/10.48550/arXiv.2410.22237'
 - Authors: 'Sobczyk, Aleksandros; Mladenovic, Marko; Luisier, Mathieu; '
   Number: ''
   Pages: 19013-19086
@@ -63,6 +66,8 @@
   Volume: '37'
   Year: '2024'
   Link: 'https://nips.cc/virtual/2024/poster/94800'
+  Video: 'https://nips.cc/virtual/2024/poster/94800'
+  Arxiv: 'https://arxiv.org/abs/2311.10459'
 - Authors: 'Cardinale, Antonio; Castrogiovanni, Alessandro; Gaudin, Theophile; Geluykens,
     Joppe; Laino, Teodoro; Manica, Matteo; Probst, Daniel; Schwaller, Philippe; Sobczyk,
     Aleksandros; Toniato, Alessandra; '
@@ -84,6 +89,9 @@
   Volume: '35'
   Year: '2022'
   Link: 'https://neurips.cc/virtual/2022/poster/54743'
+  Arxiv: 'https://arxiv.org/abs/2205.12307'
+  Video: 'https://neurips.cc/virtual/2022/poster/54743'
+  Code: 'https://github.com/IBM/JLPlusPlus'
 - Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
   Number: '4'
   Pages: 1-27
@@ -94,6 +102,9 @@
   Volume: '48'
   Year: '2022'
   Link: 'https://doi.org/10.1145/3555370'
+  Arxiv: 'https://arxiv.org/abs/2203.02798'
+  Video: 'https://www.youtube.com/watch?v=ifolZb8Gei0'
+  Code: 'https://github.com/IBM/pylspack'
 - Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
   Number: '3'
   Pages: 1199-1228
@@ -103,6 +114,8 @@
   Volume: '42'
   Year: '2021'
   Link: 'https://doi.org/10.1137/20M1314471'
+  Arxiv: 'https://arxiv.org/abs/2105.11004'
+  Code: 'https://github.com/IBM/pylspack'
 - Authors: 'Venetis, Ioannis E; Sobczyk, Alexandros; Kouris, Alexandros; Nakos, Alexandros;
     Nikoloutsakos, Nikolaos; Gallopoulos, Efstratios; '
   Number: ''
