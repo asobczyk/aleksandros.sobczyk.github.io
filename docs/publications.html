@@ -14,10 +14,14 @@ permalink: /publications/
       <li>
         {{ item.Publication }}, {{ item.Year }}
       </li>
-      <li> 
+      {% if item.Highlight}
+      <b>{{ item.Highlight }}</b>
+      <li>
+        {% if item.Arxiv %}
         <a href="{{ item.Link }}">
-          Link
+          Publication
         </a>
+        {% endif %}
         {% if item.Arxiv %}
         <a href="{{ item.Arxiv }}">
           Arxiv
