@@ -19,24 +19,24 @@ permalink: /publications/
       {% endif %}
       <li>
         {% if item.Link %}
-        <a href="{{ item.Link }}">
+        [<a href="{{ item.Link }}">
           Publication
-        </a>
+        </a>]
         {% endif %}
         {% if item.Arxiv %}
-        <a href="{{ item.Arxiv }}">
+        [<a href="{{ item.Arxiv }}">
           Arxiv
-        </a>
+        </a>]
         {% endif %}
         {% if item.Video %}
-        <a href="{{ item.Video }}">
+        [<a href="{{ item.Video }}">
           Video
-        </a>
+        </a>]
         {% endif %}
         {% if item.Code %}
-        <a href="{{ item.Code }}">
+        [<a href="{{ item.Code }}">
           Code
-        </a>
+        </a>]
         {% endif %}
       </li>
     </ul>

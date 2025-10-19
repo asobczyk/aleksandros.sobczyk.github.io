@@ -1,5 +1,4 @@
-- Authors: 'Born, Jannis; Skogh, Filip; Rhrissorrakrai, Kahn; Utro, Filippo; Wagner,
-    Nico; Sobczyk, Aleksandros; '
+- Authors: 'Jannis Born, Filip Skogh, Kahn Rhrissorrakrai, Filippo Utro, Nico Wagner, Aleksandros Sobczyk'
   Number: ''
   Pages: ''
   Publication: Advances in Neural Information Processing Systems (NeurIPS)
@@ -9,7 +8,7 @@
   Year: '2025'
   Highlight: 'Spotlight (~3.2% top submissions)'
   Arxiv: 'https://arxiv.org/abs/2504.16275'
-- Authors: 'Carrera Vazquez, Almudena; Sobczyk, Aleksandros; '
+- Authors: 'Almudena Carrera Vazquez, Aleksandros Sobczyk'
   Number: ''
   Pages: ''
   Publication: arXiv preprint arXiv:2508.21002
@@ -18,7 +17,7 @@
   Volume: ''
   Year: '2025'
   Arxiv: 'https://doi.org/10.48550/arXiv.2508.21002'
-- Authors: 'Sobczyk, Aleksandros; Sorrentino, Giuseppe; Zouzias, Anastasios; '
+- Authors: 'Aleksandros Sobczyk, Giuseppe Sorrentino, Anastasios Zouzias'
   Number: ''
   Pages: ''
   Publication: arXiv preprint arXiv:2506.23906
@@ -27,7 +26,7 @@
   Volume: ''
   Year: '2025'
   Arxiv: 'https://doi.org/10.48550/arXiv.2506.23906'
-- Authors: "Papp, P\xE1l Andr\xE1s; Sobczyk, Aleksandros; Yzelman, Albert-Jan N; "
+- Authors: "P\xE1l Andr\xE1s Papp, Aleksandros Sobczyk, Albert-Jan N Yzelman"
   Number: ''
   Pages: 328-338
   Publication: 37th ACM Symposium on Parallelism in Algorithms
@@ -38,7 +37,7 @@
   Year: '2025'
   Link: 'https://doi.org/10.1145/3694906.3743320'
   Arxiv: 'https://arxiv.org/abs/2506.10854'
-- Authors: 'Sobczyk, Aleksandros; '
+- Authors: 'Aleksandros Sobczyk'
   Number: ''
   Pages: '131:1-131:21'
   Publication: 52nd International Colloquium on Automata, Languages, and Programming (ICALP)
@@ -48,7 +47,7 @@
   Year: '2025'
   Link: 'http://doi.org/10.4230/LIPIcs.ICALP.2025.131'
   Arxiv: 'https://arxiv.org/abs/2410.21550'
-- Authors: 'Sobczyk, Aleksandros; '
+- Authors: 'Aleksandros Sobczyk'
   Number: ''
   Pages: ''
   Publication: arXiv preprint arXiv:2410.22237
@@ -57,7 +56,7 @@
   Volume: ''
   Year: '2024'
   Arxiv: 'https://doi.org/10.48550/arXiv.2410.22237'
-- Authors: 'Sobczyk, Aleksandros; Mladenovic, Marko; Luisier, Mathieu; '
+- Authors: 'Aleksandros Sobczyk, Marko Mladenovic, Mathieu Luisier '
   Number: ''
   Pages: 19013-19086
   Publication: Advances in Neural Information Processing Systems (NeurIPS)
@@ -68,9 +67,7 @@
   Link: 'https://nips.cc/virtual/2024/poster/94800'
   Video: 'https://nips.cc/virtual/2024/poster/94800'
   Arxiv: 'https://arxiv.org/abs/2311.10459'
-- Authors: 'Cardinale, Antonio; Castrogiovanni, Alessandro; Gaudin, Theophile; Geluykens,
-    Joppe; Laino, Teodoro; Manica, Matteo; Probst, Daniel; Schwaller, Philippe; Sobczyk,
-    Aleksandros; Toniato, Alessandra; '
+- Authors: 'Antonio Cardinale, Alessandro Castrogiovanni, Theophile Gaudin, Joppe Geluykens, Teodoro Laino, Matteo Manica, Daniel Probst, Philippe Schwaller, Aleksandros Sobczyk, Alessandra Toniato, Alain C. Vaucher, Heiko Wolf, Federico Zipoli '
   Number: 7/8
   Pages: 484-488
   Publication: Chimia
@@ -80,7 +77,7 @@
   Volume: '77'
   Year: '2023'
   Link: 'https://doi.org/10.2533/chimia.2023.484'
-- Authors: 'Sobczyk, Aleksandros; Luisier, Mathieu; '
+- Authors: 'Aleksandros Sobczyk, Mathieu Luisier'
   Number: ''
   Pages: 19357-19369
   Publication: Advances in Neural Information Processing Systems (NeurIPS)
@@ -92,20 +89,19 @@
   Arxiv: 'https://arxiv.org/abs/2205.12307'
   Video: 'https://neurips.cc/virtual/2022/poster/54743'
   Code: 'https://github.com/IBM/JLPlusPlus'
-- Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
+- Authors: 'Aleksandros Sobczyk, Efstratios Gallopoulos'
   Number: '4'
   Pages: 1-27
   Publication: ACM Transactions on Mathematical Software
   Publisher: ACM New York, NY
-  Title: 'pylspack: Parallel Algorithms and Data Structures for Sketching, Column
-    Subset Selection, Regression, and Leverage Scores'
+  Title: 'pylspack: Parallel Algorithms and Data Structures for Sketching, Column Subset Selection, Regression, and Leverage Scores'
   Volume: '48'
   Year: '2022'
   Link: 'https://doi.org/10.1145/3555370'
   Arxiv: 'https://arxiv.org/abs/2203.02798'
   Video: 'https://www.youtube.com/watch?v=ifolZb8Gei0'
   Code: 'https://github.com/IBM/pylspack'
-- Authors: 'Sobczyk, Aleksandros; Gallopoulos, Efstratios; '
+- Authors: 'Aleksandros Sobczyk, Efstratios Gallopoulos'
   Number: '3'
   Pages: 1199-1228
   Publication: SIAM Journal on Matrix Analysis and Applications
@@ -116,24 +112,21 @@
   Link: 'https://doi.org/10.1137/20M1314471'
   Arxiv: 'https://arxiv.org/abs/2105.11004'
   Code: 'https://github.com/IBM/pylspack'
-- Authors: 'Venetis, Ioannis E; Sobczyk, Alexandros; Kouris, Alexandros; Nakos, Alexandros;
-    Nikoloutsakos, Nikolaos; Gallopoulos, Efstratios; '
+- Authors: 'Ioannis E. Venetis, Alexandros Sobczyk, Alexandros Kouris, Alexandros Nakos, Nikolaos Nikoloutsakos, Efstratios Gallopoulos'
   Number: ''
   Pages: 371-380
   Publication: 'Parallel Computing: On the Road to Exascale'
   Publisher: IOS Press
-  Title: 'A general tridiagonal solver for coprocessors: Adapting g-Spike for the
-    Intel Xeon Phi'
+  Title: 'A general tridiagonal solver for coprocessors: Adapting g-Spike for the Intel Xeon Phi'
   Volume: ''
   Year: '2016'
   Link: 'https://doi.org/10.3233/978-1-61499-621-7-371'
-- Authors: 'Venetis, Ioannis E; Kouris, Alexandros; Sobczyk, Alexandros; Gallopoulos,
-    Efstratios; Sameh, Ahmed H; '
+- Authors: 'Ioannis E. Venetis, Alexandros Kouris, Alexandros Sobczyk, Efstratios Gallopoulos, Ahmed H. Sameh'
   Number: ''
   Pages: 101-116
   Publication: Parallel Computing
   Publisher: Elsevier
-  Title: A direct tridiagonal solver based on Givens rotations for GPU architectures
+  Title: 'A direct tridiagonal solver based on Givens rotations for GPU architectures'
   Volume: '49'
   Year: '2015'
   Link: 'https://doi.org/10.1016/j.parco.2015.03.008'
