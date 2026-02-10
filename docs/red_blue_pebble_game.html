@@ -1,0 +1,796 @@
+---
+layout: page
+title: Red-Blue Pebble Game
+permalink: /red-blue-pebble-game/
+---
+<!-- 
+Hong-Kung Red-Blue Pebble Game Interactive Demo
+Original implementation by Aleksandros Sobczyk, 2026
+Code development assisted by DeepSeek AI
+https://deepseek.com
+-->
+<head>
+  <title>Red-Blue Pebble Game - Layered DAG</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      background: #f5f7fa;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-size: 2.2em;
+      font-weight: 600;
+    }
+    .subtitle {
+      text-align: center;
+      color: #7f8c8d;
+      margin-bottom: 30px;
+      font-size: 1em;
+    }
+    #graph-container {
+      width: 100%;
+      height: 500px;
+      border: 2px solid #dfe6e9;
+      margin: 20px 0;
+      position: relative;
+      background: #f8fafc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .node {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid;
+      z-index: 10;
+    }
+    .node:hover {
+      transform: scale(1.05);
+    }
+    .red { 
+      background: #ff6b6b;
+      color: white;
+      border-color: #ff4757;
+    }
+    .blue { 
+      background: #4dabf7;
+      color: white;
+      border-color: #228be6;
+    }
+    .empty { 
+      background: white;
+      color: #495057;
+      border-color: #adb5bd;
+    }
+    .edge {
+      position: absolute;
+      background: #636e72;
+      height: 2px;
+      transform-origin: 0 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .arrow {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: #636e72;
+        clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+        transform-origin: center;
+        pointer-events: none;
+        z-index: 11;
+    }
+    .controls {
+      margin: 25px 0;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #e9ecef;
+    }
+    button {
+      margin: 0;
+      padding: 10px 20px;
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 160px;
+      background: white;
+      color: #2c3e50;
+    }
+    button:hover {
+      background: #f1f3f4;
+      border-color: #ccc;
+    }
+    .btn-generate {
+      border-color: #51cf66;
+      color: #2b8a3e;
+    }
+    .btn-red {
+      border-color: #ff6b6b;
+      color: #c92a2a;
+    }
+    .btn-blue {
+      border-color: #4dabf7;
+      color: #1971c2;
+    }
+    .btn-remove {
+      border-color: #ffd43b;
+      color: #e67700;
+    }
+    .btn-save {
+      border-color: #4dabf7;
+      color: #1971c2;
+    }
+    .btn-load {
+      border-color: #ff6b6b;
+      color: #c92a2a;
+    }
+    .btn-compute {
+      border-color: #51cf66;
+      color: #2b8a3e;
+    }
+    .btn-delete {
+      border-color: #ffd43b;
+      color: #e67700;
+    }
+    .counter {
+      font-size: 1.3em;
+      color: #ff6b6b;
+      font-weight: 600;
+      background: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      min-width: 140px;
+      text-align: center;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      color: #495057;
+      font-size: 1em;
+      text-align: center;
+      border-left: 4px solid #4dabf7;
+      border: 1px solid #e9ecef;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid;
+    }
+    .layer-label {
+      position: absolute;
+      left: 15px;
+      font-weight: 600;
+      color: #636e72;
+      font-size: 0.9em;
+      z-index: 5;
+    }
+    .memory-info {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+    .memory-type {
+      text-align: center;
+      padding: 15px;
+      border-radius: 6px;
+      min-width: 180px;
+    }
+    .fast-memory {
+      background: #fff5f5;
+      border: 1px solid #ffc9c9;
+    }
+    .slow-memory {
+      background: #f0f8ff;
+      border: 1px solid #a5d8ff;
+    }
+    .rules {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+      border: 1px solid #e9ecef;
+    }
+    .rules h3 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .rules ol {
+      line-height: 1.6;
+      padding-left: 20px;
+    }
+    .node[data-is-output="true"] {
+      box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.6) !important;
+    }
+    input[type="number"] {
+      font-family: inherit;
+      font-size: 15px;
+      text-align: center;
+    }
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #4dabf7;
+      box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Red-Blue Pebble Game</h1>
+    <div class="subtitle">Original model variant by Hong & Kung, STOC '81</div>
+    
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background: #ff6b6b; border-color: #ff4757;"></div>
+        <span>Fast Memory (Red)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #4dabf7; border-color: #228be6;"></div>
+        <span>Slow Memory (Blue)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: white; border-color: #adb5bd;"></div>
+        <span>Empty Node</span>
+      </div>
+    </div>
+    
+    <div class="memory-info">
+      <div class="memory-type fast-memory">
+        <div style="font-weight: 600; color: #c92a2a;">Fast Memory</div>
+        <div style="font-size: 0.9em; color: #868e96;">Red Pebbles</div>
+        <div style="font-size: 1.2em; font-weight: 600; margin-top: 5px;">Limit: 4</div>
+      </div>
+      <div class="memory-type slow-memory">
+        <div style="font-weight: 600; color: #1971c2;">Slow Memory</div>
+        <div style="font-size: 0.9em; color: #868e96;">Blue Pebbles</div>
+        <div style="font-size: 1.2em; font-weight: 600; margin-top: 5px;">Unlimited</div>
+      </div>
+    </div>
+    <div class="controls">
+      <div style="display: flex; align-items: center; gap: 10px; margin-right: 15px;">
+        <label for="red-limit" style="font-weight: 500; color: #c92a2a;">Red Pebbles:</label>
+        <input type="number" id="red-limit" min="2" max="10" value="4" style="width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+      </div>
+      <button class="btn-generate" onclick="generateLayeredDAG()">Generate Layered DAG</button>
+      <button class="btn-blue" onclick="startPlaceBlue()">Place Blue</button>
+      <button class="btn-red" onclick="startPlaceRed()">Place Red</button>
+      <button class="btn-delete" onclick="startDeleteRed()">Delete Red</button>
+      <div class="counter">Moves: <span id="move-counter">0</span></div>
+    </div>
+    
+    <div id="graph-container"></div>
+    
+    <div class="status" id="status">Click "Generate Layered DAG" to start!</div>
+    
+    <script>
+      // Game state
+      let gameState = {
+        nodes: [],
+        edges: [],
+        redPebbles: new Set(),
+        bluePebbles: new Set(),
+        redLimit: 4,
+        moves: 0,
+        mode: 'none',
+        layers: []
+      };
+      // Function to get all output nodes (nodes with no outgoing edges)
+      function getOutputNodes() {
+        const outputNodes = [];
+        for (let nodeId = 0; nodeId < gameState.nodes.length; nodeId++) {
+          const hasOutgoingEdges = gameState.edges.some(edge => edge.source === nodeId);
+          if (!hasOutgoingEdges) {
+            outputNodes.push(nodeId);
+          }
+        }
+        return outputNodes;
+      }
+
+      // Function to check if game is complete
+      function checkGameCompletion() {
+        const outputNodes = getOutputNodes();
+        if (outputNodes.length === 0) return false; // No output nodes
+        
+        // Check if ALL output nodes have blue pebbles
+        for (const nodeId of outputNodes) {
+          if (!gameState.bluePebbles.has(nodeId)) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      // Function to highlight output nodes with a green border
+      function highlightOutputNodes() {
+        const outputNodes = getOutputNodes();
+        for (const nodeId of outputNodes) {
+          const nodeDiv = document.getElementById(`node-${nodeId}`);
+          if (nodeDiv) {
+            // Add a green border to output nodes
+            nodeDiv.style.boxShadow = '0 0 0 2px rgba(46, 204, 113, 0.6)';
+          }
+        }
+      }
+      
+      // Generate a layered DAG with max in-degree constraint
+      function generateLayeredDAG() {
+        const container = document.getElementById('graph-container');
+        container.innerHTML = '';
+        
+        // Get user-defined red limit
+        const redLimitInput = document.getElementById('red-limit');
+        const userRedLimit = parseInt(redLimitInput.value);
+        gameState.redLimit = Math.max(2, Math.min(userRedLimit, 10)); // Clamp between 2 and 10
+        
+        // Clear game state
+        gameState.nodes = [];
+        gameState.edges = [];
+        gameState.redPebbles.clear();
+        gameState.bluePebbles.clear();
+        gameState.moves = 0;
+        gameState.layers = [];
+        updateCounter();
+        
+        // Create 3-5 layers
+        const numLayers = 3 + Math.floor(Math.random() * 3); // 3-5 layers
+        const nodesPerLayer = [3, 4, 3, 4, 3];
+        
+        // Calculate layout dimensions
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const layerSpacing = containerWidth / (numLayers + 1);
+        
+        // Create layers and nodes
+        let nodeId = 0;
+        for (let layer = 0; layer < numLayers; layer++) {
+          const layerNodes = [];
+          const nodesInThisLayer = nodesPerLayer[layer] || 3;
+          const ySpacing = containerHeight / (nodesInThisLayer + 1);
+          
+          for (let i = 0; i < nodesInThisLayer; i++) {
+            const node = {
+              id: nodeId,
+              layer: layer,
+              x: layerSpacing * (layer + 1),
+              y: ySpacing * (i + 1)
+            };
+            gameState.nodes.push(node);
+            layerNodes.push(nodeId);
+            nodeId++;
+          }
+          gameState.layers.push(layerNodes);
+        }
+        
+        // Create edges with max in-degree constraint
+        const maxInDegree = gameState.redLimit - 1; // Maximum in-degree = red pebbles - 1
+        
+        for (let layer = 0; layer < numLayers - 1; layer++) {
+          const currentLayerNodes = gameState.layers[layer];
+          const nextLayerNodes = gameState.layers[layer + 1];
+          
+          // Track in-degree for each node in next layer
+          const inDegreeCount = new Array(gameState.nodes.length).fill(0);
+          
+          // Ensure each node in current layer has at least one outgoing edge
+          for (const sourceId of currentLayerNodes) {
+            // Determine how many connections this node can make
+            // Ensure we don't exceed max in-degree for target nodes
+            const availableTargets = nextLayerNodes.filter(targetId => 
+              inDegreeCount[targetId] < maxInDegree
+            );
+            
+            if (availableTargets.length === 0) continue;
+            
+            const maxConnections = Math.min(2, availableTargets.length);
+            const numConnections = 1 + Math.floor(Math.random() * maxConnections);
+            const connectionsToCreate = Math.max(1, Math.min(numConnections, availableTargets.length));
+            
+            // Shuffle available targets
+            const shuffledTargets = [...availableTargets].sort(() => Math.random() - 0.5);
+            
+            for (let c = 0; c < connectionsToCreate && c < shuffledTargets.length; c++) {
+              const targetId = shuffledTargets[c];
+              
+              if (!gameState.edges.some(e => e.source === sourceId && e.target === targetId)) {
+                gameState.edges.push({source: sourceId, target: targetId});
+                inDegreeCount[targetId]++;
+              }
+            }
+          }
+          
+          // For the last layer connection, ensure each node in next layer has at least one incoming edge
+          if (layer === numLayers - 2) {
+            for (const targetId of nextLayerNodes) {
+              const hasIncoming = gameState.edges.some(e => e.target === targetId);
+              if (!hasIncoming) {
+                // Find sources that can still connect without exceeding max in-degree
+                const possibleSources = currentLayerNodes.filter(sourceId => {
+                  // Check if this edge already exists
+                  if (gameState.edges.some(e => e.source === sourceId && e.target === targetId)) {
+                    return false;
+                  }
+                  // Check if target can accept more incoming edges
+                  return inDegreeCount[targetId] < maxInDegree;
+                });
+                
+                if (possibleSources.length > 0) {
+                  const randomSource = possibleSources[Math.floor(Math.random() * possibleSources.length)];
+                  gameState.edges.push({source: randomSource, target: targetId});
+                  inDegreeCount[targetId]++;
+                }
+              }
+            }
+          }
+        }
+        
+        // Validate all nodes have in-degree <= maxInDegree
+        for (let nodeId = 0; nodeId < gameState.nodes.length; nodeId++) {
+          const inDegree = gameState.edges.filter(e => e.target === nodeId).length;
+          if (inDegree > maxInDegree) {
+            console.warn(`Node v${nodeId} has in-degree ${inDegree} > max ${maxInDegree}`);
+          }
+        }
+        
+        // Now create the visual elements
+        for (let layer = 0; layer < gameState.layers.length; layer++) {
+          // Add layer label
+          const layerLabel = document.createElement('div');
+          layerLabel.className = 'layer-label';
+          layerLabel.style.top = `${containerHeight / 2 - 10}px`;
+          layerLabel.style.left = `${layerSpacing * (layer + 1) - 25}px`;
+          container.appendChild(layerLabel);
+        }
+        
+        // Create node visuals
+        for (const node of gameState.nodes) {
+          const nodeDiv = document.createElement('div');
+          nodeDiv.className = 'node empty';
+          nodeDiv.id = `node-${node.id}`;
+          nodeDiv.textContent = `v${node.id}`;
+          nodeDiv.style.left = `${node.x - 25}px`;
+          nodeDiv.style.top = `${node.y - 25}px`;
+          
+          nodeDiv.dataset.nodeId = node.id;
+          nodeDiv.onclick = function() {
+            const clickedNodeId = parseInt(this.dataset.nodeId);
+            handleNodeClick(clickedNodeId);
+          };
+          
+          container.appendChild(nodeDiv);
+        }
+        
+        // Give free blue pebbles to source nodes (nodes with no incoming edges)
+        for (const node of gameState.nodes) {
+          const hasIncomingEdges = gameState.edges.some(edge => edge.target === node.id);
+          
+          if (!hasIncomingEdges) {
+            gameState.bluePebbles.add(node.id);
+            
+            // Update the visual representation
+            const nodeDiv = document.getElementById(`node-${node.id}`);
+            if (nodeDiv) {
+              nodeDiv.className = 'node blue';
+            }
+          }
+        }
+        
+        // Draw all edges with arrows
+        drawAllEdges();
+        
+        const sourceNodes = Array.from(gameState.bluePebbles).map(id => `v${id}`).join(', ');
+        document.getElementById('status').textContent = 
+          `DAG generated with ${gameState.nodes.length} nodes. Max in-degree: ${maxInDegree}. Source nodes: ${sourceNodes}.`;
+        gameState.mode = 'none';
+        
+        // Update the memory info display
+        updateMemoryInfo();
+
+        // Highlight output nodes
+        highlightOutputNodes();
+      }
+
+      // Update memory info display
+      function updateMemoryInfo() {
+        const fastMemoryDiv = document.querySelector('.fast-memory div:last-child');
+        if (fastMemoryDiv) {
+          fastMemoryDiv.textContent = `Limit: ${gameState.redLimit}`;
+        }
+      }
+
+      // Draw edges with arrows
+      function drawAllEdges() {
+        const container = document.getElementById('graph-container');
+        
+        // Clear existing edges
+        const edgesAndArrows = container.querySelectorAll('.edge, .arrow');
+        edgesAndArrows.forEach(el => el.remove());
+        
+        // Draw new edges
+        for (const edge of gameState.edges) {
+          const source = gameState.nodes[edge.source];
+          const target = gameState.nodes[edge.target];
+          
+          const dx = target.x - source.x;
+          const dy = target.y - source.y;
+          const length = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+          
+          // Draw edge line - stop before reaching the target node
+          const edgeLength = length - 28;
+          const edgeDiv = document.createElement('div');
+          edgeDiv.className = 'edge';
+          edgeDiv.style.left = `${source.x}px`;
+          edgeDiv.style.top = `${source.y}px`;
+          edgeDiv.style.width = `${edgeLength}px`;
+          edgeDiv.style.transform = `rotate(${angle}deg)`;
+          container.appendChild(edgeDiv);
+          
+          // Draw arrowhead
+          const arrowDiv = document.createElement('div');
+          arrowDiv.className = 'arrow';
+          const arrowX = source.x + (dx / length) * (edgeLength - 8);
+          const arrowY = source.y + (dy / length) * (edgeLength - 8);
+          arrowDiv.style.left = `${arrowX - 4}px`;
+          arrowDiv.style.top = `${arrowY - 5}px`;
+          arrowDiv.style.transform = `rotate(${angle}deg)`;
+          container.appendChild(arrowDiv);
+        }
+      }
+
+      // Game rules implementation - SIMPLIFIED RULES
+      function placeBluePebble(nodeId) {
+        // Rule 1: Can place blue on a node that has a red pebble (cost 1)
+        if (!gameState.redPebbles.has(nodeId)) {
+          alert('Cannot place blue: Node must have a red pebble first!');
+          return false;
+        }
+        if (gameState.bluePebbles.has(nodeId)) {
+          alert('Node already has a blue pebble!');
+          return false;
+        }
+        
+        gameState.bluePebbles.add(nodeId);
+        gameState.redPebbles.delete(nodeId);
+        return true;
+      }
+
+      function placeRedPebble(nodeId) {
+        // Check if node already has red pebble
+        if (gameState.redPebbles.has(nodeId)) {
+          alert('Node already has a red pebble!');
+          return false;
+        }
+        
+        // Check fast memory limit
+        if (gameState.redPebbles.size >= gameState.redLimit) {
+          alert(`Fast memory limit reached (${gameState.redLimit})! Delete some red pebbles first.`);
+          return false;
+        }
+        
+        // Rule 2a: Place red on node with no pebble where all predecessors have red (cost 0)
+        const predecessors = gameState.edges
+          .filter(e => e.target === nodeId)
+          .map(e => e.source);
+                
+        // Check if this is a source node
+        if (predecessors.length === 0) {
+          // Place red on node with blue pebble (cost 1)
+          if (gameState.bluePebbles.has(nodeId)) {
+            gameState.redPebbles.add(nodeId);
+            return { success: true, cost: 1 };
+          }
+        }
+
+        // Check if all predecessors have red pebbles
+        this_move_cost = 0
+        for (const pred of predecessors) {
+          if (!gameState.redPebbles.has(pred)) {
+            this_move_cost = 1;
+          }
+        }
+        if ( (this_move_cost == 0) || (gameState.bluePebbles.has(nodeId))){
+          gameState.redPebbles.add(nodeId);
+          return { success: true, cost: this_move_cost };
+        }
+        
+        // Cannot place red pebble
+        return false;
+       
+      }
+
+      function deleteRedPebble(nodeId) {
+        // Rule 3: Delete red from node that has red pebble (cost 0)
+        if (!gameState.redPebbles.has(nodeId)) {
+          alert('Node has no red pebble to delete!');
+          return false;
+        }
+        
+        gameState.redPebbles.delete(nodeId);
+        return true;
+      }
+      // Handle node clicks
+      function handleNodeClick(nodeId) {
+        console.log(`Node clicked: ${nodeId}, Mode: ${gameState.mode}`);
+        
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (!nodeDiv) {
+          console.error(`Node div #node-${nodeId} not found!`);
+          return;
+        }
+        
+        let success = false;
+        let message = '';
+        let costMoves = 0;
+        
+        switch(gameState.mode) {
+          case 'place-blue':
+            if (placeBluePebble(nodeId)) {
+              nodeDiv.className = 'node blue';
+              costMoves = 1;
+              success = true;
+              message = `Placed blue pebble on v${nodeId} (cost: 1)`;
+            }
+            break;
+            
+          case 'place-red':
+            const result = placeRedPebble(nodeId);
+            if (result.success) {
+              nodeDiv.className = 'node red';
+              costMoves = result.cost;
+              success = true;
+              message = result.cost === 0 
+                ? `Placed red pebble on v${nodeId} via computation (free!)`
+                : `Placed red pebble on v${nodeId} (cost: 1)`;
+            }
+            break;
+            
+          case 'delete-red':
+            if (deleteRedPebble(nodeId)) {
+              // Check if node has blue pebble to determine color
+              if (gameState.bluePebbles.has(nodeId)) {
+                nodeDiv.className = 'node blue';
+              } else {
+                nodeDiv.className = 'node empty';
+              }
+              costMoves = 0;
+              success = true;
+              message = `Deleted red pebble from v${nodeId} (free!)`;
+            }
+            break;
+            
+          default:
+            message = 'Select an action first!';
+            document.getElementById('status').textContent = message;
+            return;
+        }
+        if (success) {
+          gameState.moves += costMoves;
+          updateCounter();
+          document.getElementById('status').textContent = message;
+          console.log(`Node ${nodeId} updated. Cost: ${costMoves} moves`);
+          // Check if game is complete
+          if (checkGameCompletion()) {
+            const outputNodes = getOutputNodes();
+            const outputNodeList = outputNodes.map(id => `v${id}`).join(', ');
+            // Show congratulatory message
+            setTimeout(() => {
+              const winMessage = `🎉 CONGRATULATIONS! 🎉\n\n` +
+                `You completed the game in ${gameState.moves} moves!\n` +
+                `All output nodes (${outputNodeList}) have blue pebbles.\n\n` +
+                `Click "Generate Layered DAG" to play again!`;
+              alert(winMessage);      
+              // Update status with win message
+              document.getElementById('status').textContent = 
+                `🎉 Game Complete! ${gameState.moves} moves. Generate new DAG to play again.`;
+            }, 100);
+            // Optional confetti effect
+            if (typeof confetti === 'function') {
+              confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+              });
+            }
+          }
+        } 
+        gameState.mode = 'none';
+      }
+      // UI control functions
+      function startPlaceBlue() {
+        gameState.mode = 'place-blue';
+        document.getElementById('status').textContent = 'Click a node to place BLUE pebble - Cost: 1 move (requires red pebble on node)';
+      }
+      function startPlaceRed() {
+        gameState.mode = 'place-red';
+        document.getElementById('status').textContent = 'Click a node to place RED pebble - Cost: 1 move if node has blue, 0 moves if all predecessors have red';
+      }
+      function startDeleteRed() {
+        gameState.mode = 'delete-red';
+        document.getElementById('status').textContent = 'Click a node to DELETE red pebble - Cost: 0 moves';
+      }
+      function updateCounter() {
+        document.getElementById('move-counter').textContent = gameState.moves;
+      }
+      // Initialize on load
+      window.onload = function() {
+        // Set initial red limit from input
+        const redLimitInput = document.getElementById('red-limit');
+        gameState.redLimit = parseInt(redLimitInput.value) || 4;
+        updateMemoryInfo();
+        generateLayeredDAG();
+      };
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (gameState.nodes.length > 0) {
+          setTimeout(generateLayeredDAG, 100);
+        }
+      });
+    </script>
+    <div class="rules">
+      <h3>Game Rules:</h3>
+      <ol>
+        <li><strong>Generate Layered DAG</strong>: Creates a directed acyclic graph with nodes in layers</li>
+        <li><strong>Place Blue</strong>: Place a blue pebble on any node that has a red pebble. <strong>Cost: 1 move</strong></li>
+        <li><strong>Place Red</strong>: Two ways:
+          <ul>
+            <li>On a node where all predecessors have red: <strong>Cost: 0 moves</strong></li>
+            <li>On a node with a blue pebble: <strong>Cost: 1 move</strong></li>
+          </ul>
+        </li>
+        <li><strong>Delete Red</strong>: Remove a red pebble from any node. <strong>Cost: 0 moves</strong></li>
+        <li><strong>Initial State</strong>: Source nodes (no incoming edges) start with blue pebbles</li>
+        <li><strong>Memory Limits</strong>: Red pebbles limited to 4, blue pebbles unlimited</li>
+        <li><strong>Goal</strong>: Cover all output nodes with blue pebbles using minimal number of moves</li>
+      </ol>
+    </div>
+  </div>
+  <footer style="font-size: 0.8em; color: #666; text-align: center; margin-top: 40px; padding: 20px;">
+    Red-Blue Pebble Game Demo (Hong & Kung, STOC '81) | Implementation assisted by DeepSeek AI
+  </footer>
+</body>
