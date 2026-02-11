@@ -6,18 +6,14 @@ permalink: /red-blue-pebble-game/
 <!-- 
 Hong-Kung Red-Blue Pebble Game Interactive Demo
 Original implementation by Aleksandros Sobczyk, 2026
+Acknowledgements to: 
+Pál András Papp, Toni Böhnlein, Anastasios Zouzias,
+for improvement suggestions!
 Code development assisted by DeepSeek AI
 https://deepseek.com
 -->
 <head>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      padding: 20px;
-      background: #f5f7fa;
-      min-height: 100vh;
-      margin: 0;
-    }
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -25,13 +21,6 @@ https://deepseek.com
       border-radius: 12px;
       padding: 30px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    h1 {
-      text-align: center;
-      color: #2c3e50;
-      margin-bottom: 8px;
-      font-size: 2.2em;
-      font-weight: 600;
     }
     .subtitle {
       text-align: center;
@@ -257,12 +246,161 @@ https://deepseek.com
       border-color: #4dabf7;
       box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
     }
+    /* Unified Status & Actions Panel */
+    .status-panel {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      margin-top: 20px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .status-header {
+      padding: 15px 20px;
+      background: white;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #status-message {
+      color: #495057;
+      font-size: 1em;
+      font-weight: 500;
+    }
+    .selected-node-indicator {
+      background: #e7f5ff;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      color: #1971c2;
+      border-left: none;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .node-state-badge {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .node-state-badge.red { background: #ff6b6b; border: 1px solid #ff4757; }
+    .node-state-badge.blue { background: #4dabf7; border: 1px solid #228be6; }
+    .node-state-badge.empty { background: #adb5bd; border: 1px solid #868e96; }
+    .actions-container {
+      padding: 15px 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      min-height: 70px;
+      background: #f8f9fa;
+    }
+    .action-button {
+      padding: 10px 20px;
+      border: 1px solid;
+      border-radius: 30px;
+      background: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .action-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    .action-button .cost-badge {
+      background: #f1f3f5;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #495057;
+    }
+    .action-button.place-red-load {
+      border-color: #ff6b6b;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+    }
+    .action-button.place-red-load:hover {
+      background: #ff5252;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+    }
+    .action-button.place-red-load .cost-badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+    .action-button.place-red-compute {
+      border-color: #ff8787;
+      background: #ff8787;
+      color: white;
+      border: none;
+    }
+    .action-button.place-red-compute:hover {
+      background: #ff6b6b;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(255, 135, 135, 0.3);
+    }
+    .action-button.place-red-compute .cost-badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+    .action-button.place-blue {
+      border-color: #4dabf7;
+      background: #4dabf7;
+      color: white;
+      border: none;
+    }
+    .action-button.place-blue:hover {
+      background: #339af0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(77, 171, 247, 0.3);
+    }
+    .action-button.place-blue .cost-badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+    .action-button.delete-red {
+      border-color: #ff922b;
+      background: #ff922b;
+      color: white;
+      border: none;
+    }
+    .action-button.delete-red:hover {
+      background: #fd7e14;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(255, 146, 43, 0.3);
+    }
+    .action-button.delete-red .cost-badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+    .no-actions-message {
+      color: #868e96;
+      font-style: italic;
+      padding: 8px 0;
+      font-size: 0.95em;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="subtitle">Original model variant by Hong & Kung, STOC '81</div>
-    <div class="subtitle">Implementation assisted by DeepSeek AI</div>
+    <div class="subtitle">Demo implementation of the original red-blue pebble game by Hong & Kung, STOC '81</div>
+    <div class="subtitle">Development assisted by DeepSeek AI</div>
     
     <div class="legend">
       <div class="legend-item">
@@ -297,15 +435,21 @@ https://deepseek.com
         <input type="number" id="red-limit" min="2" max="10" value="4" style="width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
       </div>
       <button class="btn-generate" onclick="generateLayeredDAG()">Generate Layered DAG</button>
-      <button class="btn-blue" onclick="startPlaceBlue()">Place Blue</button>
-      <button class="btn-red" onclick="startPlaceRed()">Place Red</button>
-      <button class="btn-delete" onclick="startDeleteRed()">Delete Red</button>
       <div class="counter">Moves: <span id="move-counter">0</span></div>
     </div>
     
     <div id="graph-container"></div>
-    
-    <div class="status" id="status">Click "Generate Layered DAG" to start!</div>
+    <div id="context-menu" class="context-menu"></div>
+    <!-- Unified Status & Actions Panel -->
+    <div id="status-panel" class="status-panel">
+      <div id="status-header" class="status-header">
+        <span id="status-message">Click "Generate Layered DAG" to start!</span>
+        <span id="selected-node-indicator" class="selected-node-indicator" style="display: none;"></span>
+      </div>
+      <div id="actions-container" class="actions-container">
+        <!-- Action buttons will be dynamically inserted here -->
+      </div>
+    </div>
     
     <script>
       // Game state
@@ -359,6 +503,9 @@ https://deepseek.com
       
       // Generate a layered DAG with max in-degree constraint
       function generateLayeredDAG() {
+        // Reset status panel
+        document.getElementById('status-message').textContent = 'Click on a node to start!';
+        updateStatusPanel(null); // Clear selected node and actions
         const container = document.getElementById('graph-container');
         container.innerHTML = '';
         
@@ -496,7 +643,8 @@ https://deepseek.com
           nodeDiv.style.top = `${node.y - 25}px`;
           
           nodeDiv.dataset.nodeId = node.id;
-          nodeDiv.onclick = function() {
+          nodeDiv.onclick = function(e) {
+            e.stopPropagation(); // Prevent document click handler from immediately closing menu
             const clickedNodeId = parseInt(this.dataset.nodeId);
             handleNodeClick(clickedNodeId);
           };
@@ -532,6 +680,9 @@ https://deepseek.com
 
         // Highlight output nodes
         highlightOutputNodes();
+        // After generation complete
+        document.getElementById('status-message').textContent = 
+          `DAG generated with ${gameState.nodes.length} nodes. Max in-degree: ${maxInDegree}. Click on a node to see available moves.`;
       }
 
       // Update memory info display
@@ -653,9 +804,10 @@ https://deepseek.com
         gameState.redPebbles.delete(nodeId);
         return true;
       }
-      // Handle node clicks
+      
+      // Handle node clicks - shows context menu anchored to the clicked node
       function handleNodeClick(nodeId) {
-        console.log(`Node clicked: ${nodeId}, Mode: ${gameState.mode}`);
+        console.log(`Node clicked: ${nodeId}`);
         
         const nodeDiv = document.getElementById(`node-${nodeId}`);
         if (!nodeDiv) {
@@ -663,96 +815,203 @@ https://deepseek.com
           return;
         }
         
-        let success = false;
-        let message = '';
-        let costMoves = 0;
+        // Store currently selected node
+        gameState.selectedNode = nodeId;
         
-        switch(gameState.mode) {
-          case 'place-blue':
-            if (placeBluePebble(nodeId)) {
-              nodeDiv.className = 'node blue';
-              costMoves = 1;
-              success = true;
-              message = `Placed blue pebble on v${nodeId} (cost: 1)`;
-            }
-            break;
-            
-          case 'place-red':
-            const result = placeRedPebble(nodeId);
-            if (result.success) {
-              nodeDiv.className = 'node red';
-              costMoves = result.cost;
-              success = true;
-              message = result.cost === 0 
-                ? `Placed red pebble on v${nodeId} via computation (free!)`
-                : `Placed red pebble on v${nodeId} (cost: 1)`;
-            }
-            break;
-            
-          case 'delete-red':
-            if (deleteRedPebble(nodeId)) {
-              // Check if node has blue pebble to determine color
-              if (gameState.bluePebbles.has(nodeId)) {
-                nodeDiv.className = 'node blue';
-              } else {
-                nodeDiv.className = 'node empty';
-              }
-              costMoves = 0;
-              success = true;
-              message = `Deleted red pebble from v${nodeId} (free!)`;
-            }
-            break;
-            
-          default:
-            message = 'Select an action first!';
-            document.getElementById('status').textContent = message;
-            return;
+        // Update the status panel with this node's available moves
+        updateStatusPanel(nodeId, `Node v${nodeId} selected`);
+      }
+      // Function to get available moves for a node
+      function getAvailableMoves(nodeId) {
+        const moves = [];
+        const hasRed = gameState.redPebbles.has(nodeId);
+        const hasBlue = gameState.bluePebbles.has(nodeId);
+        const redLimitReached = gameState.redPebbles.size >= gameState.redLimit;
+        
+        // Rule 1: If node has blue pebble -> can place red (load) (cost 1)
+        if (hasBlue && !hasRed) {
+          moves.push({
+            id: 'place-red-blue',
+            label: 'Place Red',
+            class: 'place-red-load',
+            cost: 1,
+            action: () => placeRedFromBlue(nodeId)
+          });
         }
-        if (success) {
-          gameState.moves += costMoves;
+        
+        // Rule 2: If node has no pebble and all predecessors have red -> can place red (compute) (cost 0)
+        if (!hasRed && !hasBlue && !redLimitReached) {
+          const predecessors = gameState.edges
+            .filter(e => e.target === nodeId)
+            .map(e => e.source);
+          
+          if (predecessors.length > 0) {
+            let allPredecessorsHaveRed = true;
+            for (const pred of predecessors) {
+              if (!gameState.redPebbles.has(pred)) {
+                allPredecessorsHaveRed = false;
+                break;
+              }
+            }
+            
+            if (allPredecessorsHaveRed) {
+              moves.push({
+                id: 'place-red-compute',
+                label: 'Place Red',
+                class: 'place-red-compute',
+                cost: 0,
+                action: () => placeRedCompute(nodeId, predecessors)
+              });
+            }
+          }
+        }
+        
+        // Rule 3: If node has red pebble -> can place blue OR delete red
+        if (hasRed) {
+          // Place blue on node with red
+          if (!hasBlue) {
+            moves.push({
+              id: 'place-blue',
+              label: 'Place Blue',
+              class: 'place-blue',
+              cost: 1,
+              action: () => placeBlueOnRed(nodeId)
+            });
+          }
+          
+          // Delete red
+          moves.push({
+            id: 'delete-red',
+            label: 'Delete Red',
+            class: 'delete-red',
+            cost: 0,
+            action: () => deleteRedFromNode(nodeId)
+          });
+        }
+        
+        return moves;
+      }
+
+      // Individual action functions
+      function placeRedFromBlue(nodeId) {
+        if (gameState.redPebbles.size >= gameState.redLimit) {
+          alert(`Fast memory limit reached (${gameState.redLimit})! Delete some red pebbles first.`);
+          return false;
+        }
+        
+        gameState.redPebbles.add(nodeId);
+        gameState.bluePebbles.delete(nodeId); // Red replaces blue
+        
+        // Update node appearance
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (nodeDiv) {
+          nodeDiv.className = 'node red';
+        }
+        
+        return { success: true, cost: 1, message: `Loaded v${nodeId} from slow memory` };
+      }
+
+      function placeRedCompute(nodeId, predecessors) {
+        if (gameState.redPebbles.size >= gameState.redLimit) {
+          alert(`Fast memory limit reached (${gameState.redLimit})! Delete some red pebbles first.`);
+          return false;
+        }
+        
+        gameState.redPebbles.add(nodeId);
+        
+        // Update node appearance
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (nodeDiv) {
+          nodeDiv.className = 'node red';
+        }
+        
+        return { success: true, cost: 0, message: `Computed v${nodeId} (free!)` };
+      }
+
+      function placeBlueOnRed(nodeId) {
+        gameState.bluePebbles.add(nodeId);
+        
+        // Update node appearance
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (nodeDiv) {
+          nodeDiv.className = 'node blue';
+        }
+        
+        return { success: true, cost: 1, message: `Saved v${nodeId} to slow memory` };
+      }
+
+      function deleteRedFromNode(nodeId) {
+        gameState.redPebbles.delete(nodeId);
+        
+        // Update node appearance
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (nodeDiv) {
+          if (gameState.bluePebbles.has(nodeId)) {
+            nodeDiv.className = 'node blue';
+          } else {
+            nodeDiv.className = 'node empty';
+          }
+        }
+        
+        return { success: true, cost: 0, message: `Deleted red pebble from v${nodeId}` };
+      }
+
+      // Execute a move and update the panel
+      function executeMove(moveId, nodeId) {
+        let result = false;
+        
+        switch(moveId) {
+          case 'place-red-blue':
+            result = placeRedFromBlue(nodeId);
+            break;
+          case 'place-red-compute':
+            result = placeRedCompute(nodeId);
+            break;
+          case 'place-blue':
+            result = placeBlueOnRed(nodeId);
+            break;
+          case 'delete-red':
+            result = deleteRedFromNode(nodeId);
+            break;
+        }
+        
+        if (result) {
+          gameState.moves += result.cost;
           updateCounter();
-          document.getElementById('status').textContent = message;
-          console.log(`Node ${nodeId} updated. Cost: ${costMoves} moves`);
+          
+          // Update status panel with success message and keep node selected
+          updateStatusPanel(nodeId, result.message);
+          
           // Check if game is complete
           if (checkGameCompletion()) {
             const outputNodes = getOutputNodes();
             const outputNodeList = outputNodes.map(id => `v${id}`).join(', ');
-            // Show congratulatory message
+            
             setTimeout(() => {
               const winMessage = `🎉 CONGRATULATIONS! 🎉\n\n` +
                 `You completed the game in ${gameState.moves} moves!\n` +
-                `All output nodes (${outputNodeList}) have blue pebbles.\n\n` +
-                `Click "Generate Layered DAG" to play again!`;
-              alert(winMessage);      
-              // Update status with win message
-              document.getElementById('status').textContent = 
-                `🎉 Game Complete! ${gameState.moves} moves. Generate new DAG to play again.`;
+                `All output nodes (${outputNodeList}) have blue pebbles.`;
+              alert(winMessage);
+              
+              // Update status with win message but keep node selected
+              updateStatusPanel(nodeId, `🎉 Game Complete! ${gameState.moves} moves. All outputs have blue pebbles!`);
             }, 100);
-            // Optional confetti effect
-            if (typeof confetti === 'function') {
-              confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-              });
-            }
           }
-        } 
-        gameState.mode = 'none';
+        }
       }
-      // UI control functions
-      function startPlaceBlue() {
-        gameState.mode = 'place-blue';
-        document.getElementById('status').textContent = 'Click a node to place BLUE pebble - Cost: 1 move (requires red pebble on node)';
-      }
-      function startPlaceRed() {
-        gameState.mode = 'place-red';
-        document.getElementById('status').textContent = 'Click a node to place RED pebble - Cost: 1 move if node has blue, 0 moves if all predecessors have red';
-      }
-      function startDeleteRed() {
-        gameState.mode = 'delete-red';
-        document.getElementById('status').textContent = 'Click a node to DELETE red pebble - Cost: 0 moves';
-      }
+
+      // Close menu when clicking elsewhere
+      document.addEventListener('click', function(e) {
+        const menu = document.getElementById('context-menu');
+        const graphContainer = document.getElementById('graph-container');
+        
+        // If click is not on a node and not on the menu, hide menu
+        if (!e.target.classList.contains('node') && 
+            !e.target.closest('.context-menu')) {
+          hideContextMenu();
+        }
+      });
+
       function updateCounter() {
         document.getElementById('move-counter').textContent = gameState.moves;
       }
@@ -770,6 +1029,67 @@ https://deepseek.com
           setTimeout(generateLayeredDAG, 100);
         }
       });
+      // Update the unified status and actions panel
+      function updateStatusPanel(nodeId = null, message = null) {
+        const statusMessage = document.getElementById('status-message');
+        const selectedNodeIndicator = document.getElementById('selected-node-indicator');
+        const actionsContainer = document.getElementById('actions-container');
+        
+        // Update status message if provided
+        if (message) {
+          statusMessage.textContent = message;
+        }
+        
+        // Clear actions container
+        actionsContainer.innerHTML = '';
+        
+        if (nodeId === null) {
+          // No node selected
+          selectedNodeIndicator.style.display = 'none';
+          return;
+        }
+        
+        // Show selected node indicator
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        let nodeState = 'empty';
+        let stateColor = '';
+        
+        if (gameState.redPebbles.has(nodeId)) {
+          nodeState = 'red';
+          stateColor = '#ff6b6b';
+        } else if (gameState.bluePebbles.has(nodeId)) {
+          nodeState = 'blue';
+          stateColor = '#4dabf7';
+        }
+        
+        selectedNodeIndicator.style.display = 'inline-flex';
+        selectedNodeIndicator.innerHTML = `
+          <span class="node-state-badge ${nodeState}"></span>
+          Selected: <strong>v${nodeId}</strong> (${nodeState} pebble)
+        `;
+        
+        // Get available moves
+        const availableMoves = getAvailableMoves(nodeId);
+        
+        // Display actions or no-actions message
+        if (availableMoves.length === 0) {
+          const noActionsMsg = document.createElement('div');
+          noActionsMsg.className = 'no-actions-message';
+          noActionsMsg.textContent = '⚠️ No available moves for this node';
+          actionsContainer.appendChild(noActionsMsg);
+        } else {
+          for (const move of availableMoves) {
+            const button = document.createElement('button');
+            button.className = `action-button ${move.class}`;
+            button.innerHTML = `
+              ${move.label}
+              <span class="cost-badge">${move.cost === 0 ? 'free' : move.cost + ' move'}</span>
+            `;
+            button.onclick = () => executeMove(move.id, nodeId);
+            actionsContainer.appendChild(button);
+          }
+        }
+      }
     </script>
     <div class="rules">
       <h3>Game Rules:</h3>
