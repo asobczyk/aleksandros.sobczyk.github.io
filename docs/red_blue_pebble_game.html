@@ -416,7 +416,7 @@ https://deepseek.com
         <span>Empty Node</span>
       </div>
     </div>
-    
+    <!--     
     <div class="memory-info">
       <div class="memory-type fast-memory">
         <div style="font-weight: 600; color: #c92a2a;">Fast Memory</div>
@@ -428,7 +428,7 @@ https://deepseek.com
         <div style="font-size: 0.9em; color: #868e96;">Blue Pebbles</div>
         <div style="font-size: 1.2em; font-weight: 600; margin-top: 5px;">Unlimited</div>
       </div>
-    </div>
+    </div> -->
     <div class="controls">
       <div style="display: flex; align-items: center; gap: 10px; margin-right: 15px;">
         <label for="red-limit" style="font-weight: 500; color: #c92a2a;">Red Pebbles:</label>
@@ -437,8 +437,6 @@ https://deepseek.com
       <button class="btn-generate" onclick="generateLayeredDAG()">Generate Layered DAG</button>
       <div class="counter">Moves: <span id="move-counter">0</span></div>
     </div>
-    
-    <div id="graph-container"></div>
     <div id="context-menu" class="context-menu"></div>
     <!-- Unified Status & Actions Panel -->
     <div id="status-panel" class="status-panel">
@@ -450,6 +448,7 @@ https://deepseek.com
         <!-- Action buttons will be dynamically inserted here -->
       </div>
     </div>
+    <div id="graph-container"></div>
     
     <script>
       // Game state
@@ -1104,7 +1103,7 @@ https://deepseek.com
         </li>
         <li><strong>Delete Red</strong>: Remove a red pebble from any node. <strong>Cost: 0 moves</strong></li>
         <li><strong>Initial State</strong>: Source nodes (no incoming edges) start with blue pebbles</li>
-        <li><strong>Memory Limits</strong>: Red pebbles limited to 4, blue pebbles unlimited</li>
+        <li><strong>Memory Limits</strong>: Red pebbles limited, blue pebbles unlimited</li>
         <li><strong>Goal</strong>: Cover all output nodes with blue pebbles using minimal number of moves</li>
       </ol>
     </div>
