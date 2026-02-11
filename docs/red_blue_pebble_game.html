@@ -389,6 +389,47 @@ https://deepseek.com
       background: rgba(255, 255, 255, 0.25);
       color: white;
     }
+    /* Disabled state for action buttons */
+    .action-button.disabled,
+    .action-button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .action-button.disabled:hover,
+    .action-button:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Keep the colors but make them transparent */
+    .action-button.disabled.place-red-load,
+    .action-button:disabled.place-red-load {
+      background: rgba(255, 107, 107, 0.4);
+    }
+
+    .action-button.disabled.place-red-compute,
+    .action-button:disabled.place-red-compute {
+      background: rgba(255, 135, 135, 0.4);
+    }
+
+    .action-button.disabled.place-blue,
+    .action-button:disabled.place-blue {
+      background: rgba(77, 171, 247, 0.4);
+    }
+
+    .action-button.disabled.delete-red,
+    .action-button:disabled.delete-red {
+      background: rgba(255, 146, 43, 0.4);
+    }
+
+    .action-button.disabled .cost-badge,
+    .action-button:disabled .cost-badge {
+      background: rgba(255, 255, 255, 0.15);
+    }
     .no-actions-message {
       color: #868e96;
       font-style: italic;
@@ -503,8 +544,8 @@ https://deepseek.com
       // Generate a layered DAG with max in-degree constraint
       function generateLayeredDAG() {
         // Reset status panel
-        document.getElementById('status-message').textContent = 'Click on a node to start!';
-        updateStatusPanel(null); // Clear selected node and actions
+        document.getElementById('status-message').textContent = 'Generating new DAG...';
+        updateStatusPanel(null); // This will show all buttons as disabled/opaque
         const container = document.getElementById('graph-container');
         container.innerHTML = '';
         
@@ -681,7 +722,7 @@ https://deepseek.com
         highlightOutputNodes();
         // After generation complete
         document.getElementById('status-message').textContent = 
-          `DAG generated with ${gameState.nodes.length} nodes. Max in-degree: ${maxInDegree}. Click on a node to see available moves.`;
+          `DAG generated with ${gameState.nodes.length} nodes. Max in-degree: ${maxInDegree}. Click on a node to enable actions.`;
       }
 
       // Update memory info display
@@ -819,76 +860,6 @@ https://deepseek.com
         
         // Update the status panel with this node's available moves
         updateStatusPanel(nodeId, `Node v${nodeId} selected`);
-      }
-      // Function to get available moves for a node
-      function getAvailableMoves(nodeId) {
-        const moves = [];
-        const hasRed = gameState.redPebbles.has(nodeId);
-        const hasBlue = gameState.bluePebbles.has(nodeId);
-        const redLimitReached = gameState.redPebbles.size >= gameState.redLimit;
-        
-        // Rule 1: If node has blue pebble -> can place red (load) (cost 1)
-        if (hasBlue && !hasRed) {
-          moves.push({
-            id: 'place-red-blue',
-            label: 'Place Red',
-            class: 'place-red-load',
-            cost: 1,
-            action: () => placeRedFromBlue(nodeId)
-          });
-        }
-        
-        // Rule 2: If node has no pebble and all predecessors have red -> can place red (compute) (cost 0)
-        if (!hasRed && !hasBlue && !redLimitReached) {
-          const predecessors = gameState.edges
-            .filter(e => e.target === nodeId)
-            .map(e => e.source);
-          
-          if (predecessors.length > 0) {
-            let allPredecessorsHaveRed = true;
-            for (const pred of predecessors) {
-              if (!gameState.redPebbles.has(pred)) {
-                allPredecessorsHaveRed = false;
-                break;
-              }
-            }
-            
-            if (allPredecessorsHaveRed) {
-              moves.push({
-                id: 'place-red-compute',
-                label: 'Place Red',
-                class: 'place-red-compute',
-                cost: 0,
-                action: () => placeRedCompute(nodeId, predecessors)
-              });
-            }
-          }
-        }
-        
-        // Rule 3: If node has red pebble -> can place blue OR delete red
-        if (hasRed) {
-          // Place blue on node with red
-          if (!hasBlue) {
-            moves.push({
-              id: 'place-blue',
-              label: 'Place Blue',
-              class: 'place-blue',
-              cost: 1,
-              action: () => placeBlueOnRed(nodeId)
-            });
-          }
-          
-          // Delete red
-          moves.push({
-            id: 'delete-red',
-            label: 'Delete Red',
-            class: 'delete-red',
-            cost: 0,
-            action: () => deleteRedFromNode(nodeId)
-          });
-        }
-        
-        return moves;
       }
 
       // Individual action functions
@@ -1042,53 +1013,123 @@ https://deepseek.com
         // Clear actions container
         actionsContainer.innerHTML = '';
         
+        // ALWAYS show all three action buttons
+        const allActions = [
+          {
+            id: 'place-red-load',
+            label: 'Place Red',
+            class: 'place-red-load',
+            cost: 1,
+            condition: (nodeId) => {
+              if (!nodeId) return false;
+              const hasBlue = gameState.bluePebbles.has(nodeId);
+              const hasRed = gameState.redPebbles.has(nodeId);
+              return hasBlue && !hasRed;
+            }
+          },
+          {
+            id: 'place-red-compute',
+            label: 'Place Red',
+            class: 'place-red-compute',
+            cost: 0,
+            condition: (nodeId) => {
+              if (!nodeId) return false;
+              const hasRed = gameState.redPebbles.has(nodeId);
+              const hasBlue = gameState.bluePebbles.has(nodeId);
+              const redLimitReached = gameState.redPebbles.size >= gameState.redLimit;
+              
+              if (hasRed || hasBlue || redLimitReached) return false;
+              
+              const predecessors = gameState.edges
+                .filter(e => e.target === nodeId)
+                .map(e => e.source);
+              
+              if (predecessors.length === 0) return false;
+              
+              for (const pred of predecessors) {
+                if (!gameState.redPebbles.has(pred)) return false;
+              }
+              return true;
+            }
+          },
+          {
+            id: 'place-blue',
+            label: 'Place Blue',
+            class: 'place-blue',
+            cost: 1,
+            condition: (nodeId) => {
+              if (!nodeId) return false;
+              const hasRed = gameState.redPebbles.has(nodeId);
+              const hasBlue = gameState.bluePebbles.has(nodeId);
+              return hasRed && !hasBlue;
+            }
+          },
+          {
+            id: 'delete-red',
+            label: 'Delete Red',
+            class: 'delete-red',
+            cost: 0,
+            condition: (nodeId) => {
+              if (!nodeId) return false;
+              return gameState.redPebbles.has(nodeId);
+            }
+          }
+        ];
+        
         if (nodeId === null) {
-          // No node selected
+          // No node selected - show all buttons as disabled/opaque
           selectedNodeIndicator.style.display = 'none';
-          return;
-        }
-        
-        // Show selected node indicator
-        const nodeDiv = document.getElementById(`node-${nodeId}`);
-        let nodeState = 'empty';
-        let stateColor = '';
-        
-        if (gameState.redPebbles.has(nodeId)) {
-          nodeState = 'red';
-          stateColor = '#ff6b6b';
-        } else if (gameState.bluePebbles.has(nodeId)) {
-          nodeState = 'blue';
-          stateColor = '#4dabf7';
-        }
-        
-        selectedNodeIndicator.style.display = 'inline-flex';
-        selectedNodeIndicator.innerHTML = `
-          <span class="node-state-badge ${nodeState}"></span>
-          Selected: <strong>v${nodeId}</strong> (${nodeState} pebble)
-        `;
-        
-        // Get available moves
-        const availableMoves = getAvailableMoves(nodeId);
-        
-        // Display actions or no-actions message
-        if (availableMoves.length === 0) {
-          const noActionsMsg = document.createElement('div');
-          noActionsMsg.className = 'no-actions-message';
-          noActionsMsg.textContent = '⚠️ No available moves for this node';
-          actionsContainer.appendChild(noActionsMsg);
+          
+          for (const action of allActions) {
+            const button = createActionButton(action, null, false);
+            actionsContainer.appendChild(button);
+          }
         } else {
-          for (const move of availableMoves) {
-            const button = document.createElement('button');
-            button.className = `action-button ${move.class}`;
-            button.innerHTML = `
-              ${move.label}
-              <span class="cost-badge">${move.cost === 0 ? 'free' : move.cost + ' move'}</span>
-            `;
-            button.onclick = () => executeMove(move.id, nodeId);
+          // Node selected - show selected indicator
+          const nodeDiv = document.getElementById(`node-${nodeId}`);
+          let nodeState = 'empty';
+          
+          if (gameState.redPebbles.has(nodeId)) nodeState = 'red';
+          else if (gameState.bluePebbles.has(nodeId)) nodeState = 'blue';
+          
+          selectedNodeIndicator.style.display = 'inline-flex';
+          selectedNodeIndicator.innerHTML = `
+            <span class="node-state-badge ${nodeState}"></span>
+            Selected: <strong>v${nodeId}</strong> (${nodeState} pebble)
+          `;
+          
+          // Show all buttons with appropriate enabled/disabled states
+          for (const action of allActions) {
+            const isAvailable = action.condition(nodeId);
+            const button = createActionButton(action, nodeId, isAvailable);
             actionsContainer.appendChild(button);
           }
         }
       }
+
+      // Helper function to create action buttons
+      function createActionButton(action, nodeId, isAvailable) {
+        const button = document.createElement('button');
+        button.className = `action-button ${action.class}`;
+        
+        if (!isAvailable) {
+          button.classList.add('disabled');
+        }
+        
+        button.innerHTML = `
+          ${action.label}
+          <span class="cost-badge">${action.cost === 0 ? 'free' : action.cost + ' move'}</span>
+        `;
+        
+        if (isAvailable && nodeId !== null) {
+          button.onclick = () => executeMove(action.id, nodeId);
+        } else {
+          button.disabled = true;
+          button.style.cursor = 'not-allowed';
+        }
+        
+        return button;
+      }  
     </script>
     <div class="rules">
       <h3>Game Rules:</h3>
