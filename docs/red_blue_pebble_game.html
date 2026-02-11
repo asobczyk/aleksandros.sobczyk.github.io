@@ -14,6 +14,10 @@ https://deepseek.com
 -->
 <head>
   <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+    }
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -329,106 +333,75 @@ https://deepseek.com
       font-weight: 600;
       color: #495057;
     }
-    .action-button.place-red-load {
+    .action-button.place-red {
       border-color: #ff6b6b;
       background: #ff6b6b;
       color: white;
       border: none;
     }
-    .action-button.place-red-load:hover {
+
+    .action-button.place-red:hover {
       background: #ff5252;
       transform: translateY(-1px);
       box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
     }
-    .action-button.place-red-load .cost-badge {
+
+    .action-button.place-red .cost-badge {
       background: rgba(255, 255, 255, 0.25);
       color: white;
     }
-    .action-button.place-red-compute {
-      border-color: #ff8787;
-      background: #ff8787;
-      color: white;
-      border: none;
+
+    .action-button.place-red.disabled,
+    .action-button.place-red:disabled {
+      background: rgba(255, 107, 107, 0.4);
     }
-    .action-button.place-red-compute:hover {
-      background: #ff6b6b;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(255, 135, 135, 0.3);
-    }
-    .action-button.place-red-compute .cost-badge {
-      background: rgba(255, 255, 255, 0.25);
-      color: white;
-    }
+
+    /* Place Blue button */
     .action-button.place-blue {
       border-color: #4dabf7;
       background: #4dabf7;
       color: white;
       border: none;
     }
+
     .action-button.place-blue:hover {
       background: #339af0;
       transform: translateY(-1px);
       box-shadow: 0 4px 8px rgba(77, 171, 247, 0.3);
     }
+
     .action-button.place-blue .cost-badge {
       background: rgba(255, 255, 255, 0.25);
       color: white;
     }
+
+    .action-button.place-blue.disabled,
+    .action-button.place-blue:disabled {
+      background: rgba(77, 171, 247, 0.4);
+    }
+
+    /* Delete Red button */
     .action-button.delete-red {
       border-color: #ff922b;
       background: #ff922b;
       color: white;
       border: none;
     }
+
     .action-button.delete-red:hover {
       background: #fd7e14;
       transform: translateY(-1px);
       box-shadow: 0 4px 8px rgba(255, 146, 43, 0.3);
     }
+
     .action-button.delete-red .cost-badge {
       background: rgba(255, 255, 255, 0.25);
       color: white;
     }
-    /* Disabled state for action buttons */
-    .action-button.disabled,
-    .action-button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      pointer-events: none;
-      transform: none !important;
-      box-shadow: none !important;
-    }
 
-    .action-button.disabled:hover,
-    .action-button:disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* Keep the colors but make them transparent */
-    .action-button.disabled.place-red-load,
-    .action-button:disabled.place-red-load {
-      background: rgba(255, 107, 107, 0.4);
-    }
-
-    .action-button.disabled.place-red-compute,
-    .action-button:disabled.place-red-compute {
-      background: rgba(255, 135, 135, 0.4);
-    }
-
-    .action-button.disabled.place-blue,
-    .action-button:disabled.place-blue {
-      background: rgba(77, 171, 247, 0.4);
-    }
-
-    .action-button.disabled.delete-red,
-    .action-button:disabled.delete-red {
+    .action-button.delete-red.disabled,
+    .action-button.delete-red:disabled {
       background: rgba(255, 146, 43, 0.4);
-    }
-
-    .action-button.disabled .cost-badge,
-    .action-button:disabled .cost-badge {
-      background: rgba(255, 255, 255, 0.15);
     }
     .no-actions-message {
       color: #868e96;
@@ -472,10 +445,10 @@ https://deepseek.com
     </div> -->
     <div class="controls">
       <div style="display: flex; align-items: center; gap: 10px; margin-right: 15px;">
-        <label for="red-limit" style="font-weight: 500; color: #c92a2a;">Red Pebbles:</label>
+        <label for="red-limit" style="font-weight: 500; color: #c92a2a;">Max Red Pebbles:</label>
         <input type="number" id="red-limit" min="2" max="10" value="4" style="width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
       </div>
-      <button class="btn-generate" onclick="generateLayeredDAG()">Generate Layered DAG</button>
+      <button class="btn-generate" onclick="generateLayeredDAG()">Generate DAG</button>
       <div class="counter">Moves: <span id="move-counter">0</span></div>
     </div>
     <div id="context-menu" class="context-menu"></div>
@@ -501,7 +474,8 @@ https://deepseek.com
         redLimit: 4,
         moves: 0,
         mode: 'none',
-        layers: []
+        layers: [],
+        selectedNode: null
       };
       // Function to get all output nodes (nodes with no outgoing edges)
       function getOutputNodes() {
@@ -544,24 +518,26 @@ https://deepseek.com
       // Generate a layered DAG with max in-degree constraint
       function generateLayeredDAG() {
         // Reset status panel
-        document.getElementById('status-message').textContent = 'Generating new DAG...';
+        document.getElementById('status-message').textContent = 'Click on a node to start!';
         updateStatusPanel(null); // This will show all buttons as disabled/opaque
         const container = document.getElementById('graph-container');
         container.innerHTML = '';
         
-        // Get user-defined red limit
-        const redLimitInput = document.getElementById('red-limit');
-        const userRedLimit = parseInt(redLimitInput.value);
-        gameState.redLimit = Math.max(2, Math.min(userRedLimit, 10)); // Clamp between 2 and 10
-        
-        // Clear game state
-        gameState.nodes = [];
-        gameState.edges = [];
-        gameState.redPebbles.clear();
-        gameState.bluePebbles.clear();
-        gameState.moves = 0;
-        gameState.layers = [];
-        updateCounter();
+          // Get user-defined red limit
+          const redLimitInput = document.getElementById('red-limit');
+          const userRedLimit = parseInt(redLimitInput.value);
+          gameState.redLimit = Math.max(2, Math.min(userRedLimit, 10));
+          
+          // Clear game state
+          gameState.nodes = [];
+          gameState.edges = [];
+          gameState.redPebbles.clear();
+          gameState.bluePebbles.clear();
+          gameState.moves = 0;
+          gameState.layers = [];
+          gameState.selectedNode = null;  // Clear selected node
+          gameState.mode = 'none';
+          updateCounter();
         
         // Create 3-5 layers
         const numLayers = 3 + Math.floor(Math.random() * 3); // 3-5 layers
@@ -710,13 +686,18 @@ https://deepseek.com
         // Draw all edges with arrows
         drawAllEdges();
         
-        const sourceNodes = Array.from(gameState.bluePebbles).map(id => `v${id}`).join(', ');
-        document.getElementById('status').textContent = 
-          `DAG generated with ${gameState.nodes.length} nodes. Max in-degree: ${maxInDegree}. Source nodes: ${sourceNodes}.`;
-        gameState.mode = 'none';
-        
         // Update the memory info display
         updateMemoryInfo();
+
+        // Reset status panel - show all buttons as disabled/opaque
+        document.getElementById('status-message').textContent = 
+          `DAG generated with ${gameState.nodes.length} nodes. Max in-degree: ${maxInDegree}. Click on a node to enable actions.`;
+        updateStatusPanel(null);
+        
+        // Remove any node highlights
+        document.querySelectorAll('.node').forEach(node => {
+          node.style.boxShadow = '';
+        });
 
         // Highlight output nodes
         highlightOutputNodes();
@@ -845,7 +826,7 @@ https://deepseek.com
         return true;
       }
       
-      // Handle node clicks - shows context menu anchored to the clicked node
+      // Handle node clicks
       function handleNodeClick(nodeId) {
         console.log(`Node clicked: ${nodeId}`);
         
@@ -855,36 +836,103 @@ https://deepseek.com
           return;
         }
         
-        // Store currently selected node
+        // Store currently selected node in gameState
         gameState.selectedNode = nodeId;
         
         // Update the status panel with this node's available moves
         updateStatusPanel(nodeId, `Node v${nodeId} selected`);
+        
+        // Optional: Visual feedback - highlight selected node
+        // Remove highlight from all nodes first
+        document.querySelectorAll('.node').forEach(node => {
+          node.style.boxShadow = '';
+        });
+        // Add highlight to selected node
+        nodeDiv.style.boxShadow = '0 0 0 3px #4dabf7';
+      }
+      // Individual action functions
+      
+      // Rule 1: Place Blue on node with red pebble (Cost: 1)
+      function placeBlueOnRed(nodeId) {
+        if (!gameState.redPebbles.has(nodeId)) {
+          alert('Cannot place blue: Node must have a red pebble first!');
+          return false;
+        }
+        if (gameState.bluePebbles.has(nodeId)) {
+          alert('Node already has a blue pebble!');
+          return false;
+        }
+        
+        // Add blue pebble
+        gameState.bluePebbles.add(nodeId);
+        
+        // REMOVE the red pebble (it gets consumed)
+        gameState.redPebbles.delete(nodeId);
+        
+        // Update node appearance
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (nodeDiv) {
+          nodeDiv.className = 'node blue';
+        }
+        
+        return { success: true, cost: 1, message: `Saved v${nodeId} to slow memory (red consumed)` };
       }
 
-      // Individual action functions
+      // Rule 2a: Place Red on node with blue pebble (Cost: 1)
       function placeRedFromBlue(nodeId) {
+        if (!gameState.bluePebbles.has(nodeId)) {
+          alert('Cannot place red: Node must have a blue pebble first!');
+          return false;
+        }
+        if (gameState.redPebbles.has(nodeId)) {
+          alert('Node already has a red pebble!');
+          return false;
+        }
         if (gameState.redPebbles.size >= gameState.redLimit) {
           alert(`Fast memory limit reached (${gameState.redLimit})! Delete some red pebbles first.`);
           return false;
         }
         
         gameState.redPebbles.add(nodeId);
-        gameState.bluePebbles.delete(nodeId); // Red replaces blue
+        // Red replaces blue (blue pebble remains, both can coexist)
         
-        // Update node appearance
+        // Update node appearance - red takes precedence for display
         const nodeDiv = document.getElementById(`node-${nodeId}`);
         if (nodeDiv) {
           nodeDiv.className = 'node red';
         }
         
-        return { success: true, cost: 1, message: `Loaded v${nodeId} from slow memory` };
+        return { success: true, cost: 1, message: `Loaded v${nodeId} from blue to red (cost: 1)` };
       }
 
-      function placeRedCompute(nodeId, predecessors) {
+      // Rule 2b: Place Red on node where all predecessors have red (Cost: 0)
+      function placeRedCompute(nodeId) {
+        if (gameState.redPebbles.has(nodeId)) {
+          alert('Node already has a red pebble!');
+          return false;
+        }
         if (gameState.redPebbles.size >= gameState.redLimit) {
           alert(`Fast memory limit reached (${gameState.redLimit})! Delete some red pebbles first.`);
           return false;
+        }
+        
+        // Check if this is a source node (no incoming edges)
+        const predecessors = gameState.edges
+          .filter(e => e.target === nodeId)
+          .map(e => e.source);
+        
+        if (predecessors.length === 0) {
+          alert('Cannot compute: Source nodes must get red via load from blue pebble!');
+          return false;
+        }
+        
+        // Check if all predecessors have red pebbles
+        for (const pred of predecessors) {
+          if (!gameState.redPebbles.has(pred)) {
+            const missingPreds = predecessors.filter(p => !gameState.redPebbles.has(p));
+            alert(`Cannot compute: Need red pebbles on all predecessors: ${missingPreds.map(p => 'v' + p).join(', ')}`);
+            return false;
+          }
         }
         
         gameState.redPebbles.add(nodeId);
@@ -898,19 +946,13 @@ https://deepseek.com
         return { success: true, cost: 0, message: `Computed v${nodeId} (free!)` };
       }
 
-      function placeBlueOnRed(nodeId) {
-        gameState.bluePebbles.add(nodeId);
-        
-        // Update node appearance
-        const nodeDiv = document.getElementById(`node-${nodeId}`);
-        if (nodeDiv) {
-          nodeDiv.className = 'node blue';
+      // Rule 3: Delete Red (Cost: 0)
+      function deleteRedFromNode(nodeId) {
+        if (!gameState.redPebbles.has(nodeId)) {
+          alert('Node has no red pebble to delete!');
+          return false;
         }
         
-        return { success: true, cost: 1, message: `Saved v${nodeId} to slow memory` };
-      }
-
-      function deleteRedFromNode(nodeId) {
         gameState.redPebbles.delete(nodeId);
         
         // Update node appearance
@@ -923,24 +965,43 @@ https://deepseek.com
           }
         }
         
-        return { success: true, cost: 0, message: `Deleted red pebble from v${nodeId}` };
+        return { success: true, cost: 0, message: `Deleted red pebble from v${nodeId} (free!)` };
       }
-
       // Execute a move and update the panel
       function executeMove(moveId, nodeId) {
         let result = false;
         
         switch(moveId) {
-          case 'place-red-blue':
-            result = placeRedFromBlue(nodeId);
+          case 'place-red':
+            // Rule 2: Place Red
+            // FIRST check if node can be computed (all predecessors have red) - Cost 0
+            const predecessors = gameState.edges
+              .filter(e => e.target === nodeId)
+              .map(e => e.source);
+            
+            const canCompute = predecessors.length > 0 && 
+              predecessors.every(pred => gameState.redPebbles.has(pred)) &&
+              !gameState.redPebbles.has(nodeId) &&
+              !gameState.bluePebbles.has(nodeId);
+            
+            if (canCompute) {
+              // Rule 2b: Compute - Cost 0 (priority)
+              result = placeRedCompute(nodeId);
+            } 
+            // THEN check if node has blue pebble - Cost 1
+            else if (gameState.bluePebbles.has(nodeId) && !gameState.redPebbles.has(nodeId)) {
+              // Rule 2a: Load from blue - Cost 1
+              result = placeRedFromBlue(nodeId);
+            }
             break;
-          case 'place-red-compute':
-            result = placeRedCompute(nodeId);
-            break;
+            
           case 'place-blue':
+            // Rule 1: Place Blue on node with red pebble - Cost 1
             result = placeBlueOnRed(nodeId);
             break;
+            
           case 'delete-red':
+            // Rule 3: Delete Red - Cost 0
             result = deleteRedFromNode(nodeId);
             break;
         }
@@ -949,8 +1010,14 @@ https://deepseek.com
           gameState.moves += result.cost;
           updateCounter();
           
-          // Update status panel with success message and keep node selected
+          // Update status panel with success message and KEEP the same node selected
           updateStatusPanel(nodeId, result.message);
+          
+          // Keep the highlight on the selected node
+          const nodeDiv = document.getElementById(`node-${nodeId}`);
+          if (nodeDiv) {
+            nodeDiv.style.boxShadow = '0 0 0 3px #4dabf7';
+          }
           
           // Check if game is complete
           if (checkGameCompletion()) {
@@ -969,7 +1036,6 @@ https://deepseek.com
           }
         }
       }
-
       // Close menu when clicking elsewhere
       document.addEventListener('click', function(e) {
         const menu = document.getElementById('context-menu');
@@ -1016,40 +1082,80 @@ https://deepseek.com
         // ALWAYS show all three action buttons
         const allActions = [
           {
-            id: 'place-red-load',
+            id: 'place-red',
             label: 'Place Red',
-            class: 'place-red-load',
-            cost: 1,
-            condition: (nodeId) => {
-              if (!nodeId) return false;
-              const hasBlue = gameState.bluePebbles.has(nodeId);
-              const hasRed = gameState.redPebbles.has(nodeId);
-              return hasBlue && !hasRed;
-            }
-          },
-          {
-            id: 'place-red-compute',
-            label: 'Place Red',
-            class: 'place-red-compute',
-            cost: 0,
-            condition: (nodeId) => {
-              if (!nodeId) return false;
-              const hasRed = gameState.redPebbles.has(nodeId);
-              const hasBlue = gameState.bluePebbles.has(nodeId);
-              const redLimitReached = gameState.redPebbles.size >= gameState.redLimit;
+            class: 'place-red',
+            getCost: (nodeId) => {
+              if (nodeId === null || nodeId === undefined) {
+                return 1; // Default cost when no node selected
+              }
               
-              if (hasRed || hasBlue || redLimitReached) return false;
-              
+              // First check if compute is possible (cost 0)
               const predecessors = gameState.edges
                 .filter(e => e.target === nodeId)
                 .map(e => e.source);
               
-              if (predecessors.length === 0) return false;
-              
-              for (const pred of predecessors) {
-                if (!gameState.redPebbles.has(pred)) return false;
+              // Node has no pebble and all predecessors have red -> compute (free)
+              if (predecessors.length > 0 && 
+                  !gameState.bluePebbles.has(nodeId) && 
+                  !gameState.redPebbles.has(nodeId)) {
+                
+                let allPredecessorsHaveRed = true;
+                for (const pred of predecessors) {
+                  if (!gameState.redPebbles.has(pred)) {
+                    allPredecessorsHaveRed = false;
+                    break;
+                  }
+                }
+                if (allPredecessorsHaveRed) {
+                  return 0; // Compute is free
+                }
               }
-              return true;
+              
+              // Then check if load is possible (cost 1)
+              if (gameState.bluePebbles.has(nodeId) && !gameState.redPebbles.has(nodeId)) {
+                return 1; // Load costs 1
+              }
+              
+              // Default fallback for when action is not actually available
+              // This will be displayed but button will be disabled
+              return 1;
+            },
+            condition: (nodeId) => {
+              if (nodeId === null || nodeId === undefined) return false;
+              
+              // Cannot place red if node already has red pebble
+              if (gameState.redPebbles.has(nodeId)) return false;
+              
+              // Check red limit
+              if (gameState.redPebbles.size >= gameState.redLimit) return false;
+              
+              // FIRST PRIORITY: Can compute? (all predecessors have red, node has no pebble)
+              const predecessors = gameState.edges
+                .filter(e => e.target === nodeId)
+                .map(e => e.source);
+              
+              if (predecessors.length > 0 && 
+                  !gameState.bluePebbles.has(nodeId) && 
+                  !gameState.redPebbles.has(nodeId)) {
+                let allPredecessorsHaveRed = true;
+                for (const pred of predecessors) {
+                  if (!gameState.redPebbles.has(pred)) {
+                    allPredecessorsHaveRed = false;
+                    break;
+                  }
+                }
+                if (allPredecessorsHaveRed) {
+                  return true; // Compute is available
+                }
+              }
+              
+              // SECOND PRIORITY: Can load? (node has blue pebble)
+              if (gameState.bluePebbles.has(nodeId) && !gameState.redPebbles.has(nodeId)) {
+                return true; // Load is available
+              }
+              
+              return false;
             }
           },
           {
@@ -1058,9 +1164,13 @@ https://deepseek.com
             class: 'place-blue',
             cost: 1,
             condition: (nodeId) => {
-              if (!nodeId) return false;
+              if (nodeId === null || nodeId === undefined) return false;
+              
+              // Rule 1: Place blue on any node that has a red pebble
+              // Red pebble will be consumed
               const hasRed = gameState.redPebbles.has(nodeId);
               const hasBlue = gameState.bluePebbles.has(nodeId);
+              
               return hasRed && !hasBlue;
             }
           },
@@ -1070,7 +1180,9 @@ https://deepseek.com
             class: 'delete-red',
             cost: 0,
             condition: (nodeId) => {
-              if (!nodeId) return false;
+              if (nodeId === null || nodeId === undefined) return false;
+              
+              // Rule 3: Remove a red pebble from any node
               return gameState.redPebbles.has(nodeId);
             }
           }
@@ -1106,7 +1218,6 @@ https://deepseek.com
           }
         }
       }
-
       // Helper function to create action buttons
       function createActionButton(action, nodeId, isAvailable) {
         const button = document.createElement('button');
@@ -1116,12 +1227,29 @@ https://deepseek.com
           button.classList.add('disabled');
         }
         
+        // Get the actual cost for this action based on node state
+        let costDisplay = '';
+        
+        if (action.id === 'place-red') {
+          // Case 1: No node selected
+          if (nodeId === null || nodeId === undefined) {
+            costDisplay = '1 move'; // Default display when no node selected
+          } else {
+            // Node selected - calculate actual cost
+            const actualCost = action.getCost ? action.getCost(nodeId) : action.cost;
+            costDisplay = actualCost === 0 ? 'free' : actualCost + ' move';
+          }
+        } else {
+          // For place-blue and delete-red
+          costDisplay = action.cost === 0 ? 'free' : action.cost + ' move';
+        }
+        
         button.innerHTML = `
           ${action.label}
-          <span class="cost-badge">${action.cost === 0 ? 'free' : action.cost + ' move'}</span>
+          <span class="cost-badge">${costDisplay}</span>
         `;
         
-        if (isAvailable && nodeId !== null) {
+        if (isAvailable && nodeId !== null && nodeId !== undefined) {
           button.onclick = () => executeMove(action.id, nodeId);
         } else {
           button.disabled = true;
