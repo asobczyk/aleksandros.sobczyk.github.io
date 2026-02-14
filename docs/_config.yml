@@ -62,7 +62,7 @@ minima:
   nav_pages:
     - contact.md
     - publications.html
-    - red_blue_pebble_game.html
+    - pebble-games.md
 #
 #   Set to `true` to show excerpts on the homepage.
 #   show_excerpts: false
