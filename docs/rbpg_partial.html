@@ -1,0 +1,1314 @@
+<!-- 
+Red-Blue Pebble Game with partial computations.
+Interactive Demo of the game variant proposed in [1].
+Original implementation by Aleksandros Sobczyk, 2026
+Acknowledgements to: 
+Pál András Papp, Toni Böhnlein, Anastasios Zouzias,
+for improvement suggestions!
+Code development assisted by DeepSeek AI
+https://deepseek.com
+[1] "The Impact of Partial Computations on the Red-Blue Pebble Game." 
+Pál András Papp, Aleksandros Sobczyk, and Albert-Jan N. Yzelman. 
+Proceedings of the 37th ACM Symposium on Parallelism in Algorithms and Architectures. 2025.
+-->
+---
+layout: page
+title: Red-Blue Pebble Game
+permalink: /red-blue-pebble-game-partial-computations/
+---
+<head>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      background: #f5f7fa;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .game-description {
+      background: #f0f7ff;
+      padding: 15px 20px;
+      margin: 20px 0 25px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.95em;
+      line-height: 1.6;
+      color: #2c3e50;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-size: 2.2em;
+      font-weight: 600;
+    }
+    .subtitle {
+      text-align: center;
+      color: #7f8c8d;
+      margin-bottom: 30px;
+      font-size: 1em;
+    }
+    
+    /* Controls area styling */
+    .controls {
+      margin: 25px 0;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #e9ecef;
+    }
+    
+    .limit-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .limit-control label {
+      font-weight: 500;
+      color: #c92a2a;
+    }
+    
+    .limit-control input {
+      width: 60px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-align: center;
+      font-family: inherit;
+    }
+    
+    .limit-control input:focus {
+      outline: none;
+      border-color: #4dabf7;
+      box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+    }
+    
+    .btn-generate {
+      border: 1px solid #51cf66;
+      color: #2b8a3e;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 160px;
+    }
+    
+    .btn-generate:hover {
+      background: #ebfbee;
+    }
+    
+    .counter {
+      font-size: 1.3em;
+      color: #ff6b6b;
+      font-weight: 600;
+      background: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      min-width: 140px;
+      text-align: center;
+    }
+    
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+    }
+    
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid;
+    }
+    
+    .legend-color.blue {
+      background: #4dabf7;
+      border-color: #228be6;
+    }
+    
+    .legend-color.light-red {
+      background: #ffa8a8;
+      border-color: #ff6b6b;
+    }
+    
+    .legend-color.dark-red {
+      background: #c92a2a;
+      border-color: #a51e1e;
+    }
+    
+    .legend-color.empty {
+      background: white;
+      border-color: #adb5bd;
+    }
+    
+    /* Status panel */
+    .status-panel {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .status-header {
+      padding: 15px 20px;
+      background: white;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    #status-message {
+      color: #495057;
+      font-size: 1em;
+      font-weight: 500;
+    }
+    
+    .selected-node-indicator {
+      background: #e7f5ff;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      color: #1971c2;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .node-state-badge {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    
+    .node-state-badge.blue { background: #4dabf7; border: 1px solid #228be6; }
+    .node-state-badge.light-red { background: #ffa8a8; border: 1px solid #ff6b6b; }
+    .node-state-badge.dark-red { background: #c92a2a; border: 1px solid #a51e1e; }
+    .node-state-badge.empty { background: #adb5bd; border: 1px solid #868e96; }
+    
+    /* Actions container */
+    .actions-container {
+      padding: 15px 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    /* Action buttons - solid colors, white text */
+    .action-button {
+      padding: 10px 20px;
+      border: 2px solid transparent;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: white;
+    }
+    
+    .action-button.place-blue {
+      background: #4dabf7;
+    }
+    
+    .action-button.place-blue:hover {
+      background: #339af0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(77, 171, 247, 0.3);
+    }
+    
+    .action-button.place-light-red {
+      background: #ffa8a8;
+    }
+    
+    .action-button.place-light-red:hover {
+      background: #ff9797;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(255, 168, 168, 0.3);
+    }
+    
+    .action-button.place-dark-red {
+      background: #c92a2a;
+    }
+    
+    .action-button.place-dark-red:hover {
+      background: #b52525;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(201, 42, 42, 0.3);
+    }
+    
+    .action-button.delete-red {
+      background: #d4a017;
+    }
+    
+    .action-button.delete-red:hover {
+      background: #b8860b;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(212, 160, 23, 0.3);
+    }
+    
+    /* Active mode highlighting - black border */
+    .action-button.active-mode {
+      border: 2px solid #000000;
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    /* Disabled state for action buttons */
+    .action-button.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    
+    /* Graph container */
+    #graph-container {
+      width: 100%;
+      height: 500px;
+      border: 2px solid #dfe6e9;
+      margin: 20px 0;
+      position: relative;
+      background: #f8fafc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    /* Node styles */
+    .node {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid;
+      z-index: 10;
+    }
+    
+    .node:hover {
+      transform: scale(1.05);
+    }
+    
+    /* Pebble colors */
+    .node.blue {
+      background: #4dabf7;
+      color: white;
+      border-color: #228be6;
+    }
+    
+    .node.light-red {
+      background: #ffa8a8;
+      color: white;
+      border-color: #ff6b6b;
+    }
+    
+    .node.dark-red {
+      background: #c92a2a;
+      color: white;
+      border-color: #a51e1e;
+    }
+    
+    .node.empty {
+      background: white;
+      color: #495057;
+      border-color: #adb5bd;
+    }
+    
+    /* Selected node highlight */
+    .node.selected {
+      box-shadow: 0 0 0 3px #ffd43b;
+    }
+    
+    /* Output node highlighting */
+    .node.output {
+      box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.6);
+    }
+    
+    /* Edge styles */
+    .edge {
+      position: absolute;
+      background: #636e72;
+      height: 2px;
+      transform-origin: 0 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .arrow {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #636e72;
+      clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      transform-origin: left center;
+      pointer-events: none;
+      z-index: 11;
+    }
+    
+    /* Layer labels */
+    .layer-label {
+      position: absolute;
+      left: 15px;
+      font-weight: 600;
+      color: #636e72;
+      font-size: 0.9em;
+      z-index: 5;
+    }
+    .rules {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+      border: 1px solid #e9ecef;
+    }
+    .rules h3 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .rules ol {
+      line-height: 1.6;
+      padding-left: 20px;
+    }
+    /* Footer */
+    footer {
+      font-size: 0.8em;
+      color: #666;
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid #e9ecef;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Red-Blue Pebble Game with Partial Computations</h1>
+    <div class="subtitle">Model variant proposed by Papp, Sobczyk, and Yzelman [1].</div>
+    <div class="game-description">
+      <p>
+      In this model variant, computations can be executed in parts, where partial results can be stored in the main memory, and updated again in later steps. <br>
+      </p><p>Any graph with arbitrarily large in-degrees can be pebbled with as few as two red pebbles!<br> 
+      <p>For more details see the description below, and the corresponding publication [1].</p>
+      <p>[1] Papp, Pál András, Aleksandros Sobczyk, and Albert-Jan N. Yzelman. "The Impact of Partial Computations on the Red-Blue Pebble Game." Proceedings of the 37th ACM Symposium on Parallelism in Algorithms and Architectures. 2025.</p>
+      <p><strong>Acknowledgements</strong>: Special thanks to: Pál András Papp, Toni Böhnlein, Anastasios Zouzias,
+for improvement suggestions!<br>
+Code development assisted by DeepSeek AI
+https://deepseek.com </p>
+    
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color blue"></div>
+          <span>Blue (Slow Memory)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color light-red"></div>
+          <span>Light Red (Fast Memory, value is consistent with Slow Memory)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color dark-red"></div>
+          <span>Dark Red (Fast Memory, value is modified)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color empty"></div>
+          <span>Empty Node</span>
+        </div>
+      </div>
+      
+      <!-- Controls (only Generate and Red Limit) -->
+      <div class="controls">
+        <div class="limit-control">
+          <label for="red-limit">Max Red Pebbles:</label>
+          <input type="number" id="red-limit" min="2" max="10" value="4">
+        </div>
+        <button class="btn-generate" onclick="generateLayeredDAG()">Generate DAG</button>
+        <div class="counter">Moves: <span id="move-counter">0</span></div>
+      </div>
+
+      <!-- Unified Status & Actions Panel (above DAG) -->
+      <div id="status-panel" class="status-panel">
+        <div class="status-header">
+          <span id="status-message">Click "Generate DAG" to start!</span>
+          <span id="selected-node-indicator" class="selected-node-indicator" style="display: none;"></span>
+        </div>
+        <div id="actions-container" class="actions-container">
+          <!-- Action buttons with updated text and solid colors -->
+          <button class="action-button place-blue" onclick="setMode('place-blue')">Place Blue & L. Red</button>
+          <button class="action-button place-light-red" onclick="setMode('place-light-red')">Place L. Red</button>
+          <button class="action-button place-dark-red" onclick="setMode('compute')">Place D. Red</button>
+          <button class="action-button delete-red" onclick="setMode('delete')">Remove Red</button>
+        </div>
+      </div>
+
+      
+      <!-- Graph Container -->
+      <div id="graph-container"></div>
+    </div>
+  
+    <script>
+      // Game state
+      let gameState = {
+        nodes: [],
+        edges: [],
+        markedEdges: new Set(),           // Track marked edges as "source-target" strings
+        bluePebbles: new Set(),           // Slow memory
+        lightRedPebbles: new Set(),       // In both fast and slow
+        darkRedPebbles: new Set(),        // Only in fast (needs save)
+        redLimit: 4,                       // Total red pebbles (light + dark)
+        moves: 0,
+        mode: 'none',
+        layers: [],
+        selectedNode: null
+      };
+
+      // Set the current action mode
+      function setMode(mode) {
+        gameState.mode = mode;
+        const modeMessages = {
+          'place-blue': 'Click a node to place BLUE pebble',
+          'place-lig  ht-red': 'Click a node to place LIGHT RED pebble',
+          'compute': 'Click a node to place DARK RED pebble',
+          'delete': 'Click a node to DELETE red pebble'
+        };
+        document.getElementById('status-message').textContent = modeMessages[mode] || 'Select a node';
+        
+        // Highlight the active mode button
+        document.querySelectorAll('.action-button').forEach(btn => {
+          btn.classList.remove('active-mode');
+        });
+        
+        // Map mode to button class
+        const buttonClass = {
+          'place-blue': '.place-blue',
+          'place-light-red': '.place-light-red',
+          'compute': '.place-dark-red',
+          'delete': '.delete-red'
+        };
+        
+        const activeButton = document.querySelector(buttonClass[mode]);
+        if (activeButton) {
+          activeButton.classList.add('active-mode');
+        }
+      }
+
+      // Helper to get edge key
+      function getEdgeKey(source, target) {
+        return `${source}-${target}`;
+      }
+
+      // Check if edge is marked
+      function isEdgeMarked(source, target) {
+        return gameState.markedEdges.has(getEdgeKey(source, target));
+      }
+
+      // Get pebble type of a node (for display)
+      function getPebbleType(nodeId) {
+        // Priority: Dark Red (highest) > Light Red > Blue > empty
+        if (gameState.darkRedPebbles.has(nodeId)) return 'dark-red';
+        if (gameState.lightRedPebbles.has(nodeId)) return 'light-red';
+        if (gameState.bluePebbles.has(nodeId)) return 'blue';
+        return 'empty';
+      }
+
+      // Check if node has any red pebble (for computation eligibility)
+      function hasRedPebble(nodeId) {
+        return gameState.lightRedPebbles.has(nodeId) || gameState.darkRedPebbles.has(nodeId);
+      }
+
+      // Update node appearance based on pebble type
+      function updateNodeAppearance(nodeId) {
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (!nodeDiv) return;
+        
+        const pebbleType = getPebbleType(nodeId);
+        
+        // Remove all pebble classes
+        nodeDiv.classList.remove('blue', 'light-red', 'dark-red', 'empty');
+        
+        // Add appropriate class
+        if (pebbleType === 'blue') {
+          nodeDiv.classList.add('blue');
+        } else if (pebbleType === 'light-red') {
+          nodeDiv.classList.add('light-red');
+        } else if (pebbleType === 'dark-red') {
+          nodeDiv.classList.add('dark-red');
+        } else {
+          nodeDiv.classList.add('empty');
+        }
+      }
+
+      // Update edge appearance based on marked status
+      function updateEdgeAppearance(source, target) {
+        // This would require storing edge DOM elements - we'll implement later
+        // For now, we'll just track in state
+      }
+
+      // Generate a layered DAG 
+      function generateLayeredDAG() {
+        const container = document.getElementById('graph-container');
+        container.innerHTML = '';
+        
+        // Get user-defined red limit (still used for game mechanics, but not for graph generation)
+        const redLimitInput = document.getElementById('red-limit');
+        gameState.redLimit = Math.max(2, Math.min(parseInt(redLimitInput.value) || 4, 10));
+        
+        // Clear game state
+        gameState.nodes = [];
+        gameState.edges = [];
+        gameState.markedEdges.clear();
+        gameState.bluePebbles.clear();
+        gameState.lightRedPebbles.clear();
+        gameState.darkRedPebbles.clear();
+        gameState.moves = 0;
+        gameState.layers = [];
+        gameState.selectedNode = null;
+        gameState.mode = 'none';
+        gameState.awaitingSource = false;
+        gameState.edgeSource = null;
+        updateCounter();
+        
+        // Create 3-5 layers
+        const numLayers = 3 + Math.floor(Math.random() * 3);
+        const nodesPerLayer = [3, 4, 3, 4, 3];
+        
+        // Calculate layout dimensions
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const layerSpacing = containerWidth / (numLayers + 1);
+        
+        // Create layers and nodes
+        let nodeId = 0;
+        for (let layer = 0; layer < numLayers; layer++) {
+          const layerNodes = [];
+          const nodesInThisLayer = nodesPerLayer[layer] || 3;
+          const ySpacing = containerHeight / (nodesInThisLayer + 1);
+          
+          for (let i = 0; i < nodesInThisLayer; i++) {
+            const node = {
+              id: nodeId,
+              layer: layer,
+              x: layerSpacing * (layer + 1),
+              y: ySpacing * (i + 1)
+            };
+            gameState.nodes.push(node);
+            layerNodes.push(nodeId);
+            nodeId++;
+          }
+          gameState.layers.push(layerNodes);
+        }
+        
+        // Create edges between consecutive layers - SIMPLIFIED, NO INDEGREE RESTRICTION
+        for (let layer = 0; layer < numLayers - 1; layer++) {
+          const currentLayerNodes = gameState.layers[layer];
+          const nextLayerNodes = gameState.layers[layer + 1];
+          
+          // Ensure each node in current layer has at least one outgoing edge
+          for (const sourceId of currentLayerNodes) {
+            // Random number of outgoing edges (1-3)
+            const numConnections = 1 + Math.floor(Math.random() * 3);
+            const availableTargets = [...nextLayerNodes];
+            
+            // Shuffle available targets for random selection
+            const shuffledTargets = availableTargets.sort(() => Math.random() - 0.5);
+            
+            // Take up to numConnections targets
+            const connectionsToCreate = Math.min(numConnections, shuffledTargets.length);
+            
+            for (let c = 0; c < connectionsToCreate; c++) {
+              const targetId = shuffledTargets[c];
+              
+              // Avoid duplicate edges
+              if (!gameState.edges.some(e => e.source === sourceId && e.target === targetId)) {
+                gameState.edges.push({source: sourceId, target: targetId});
+              }
+            }
+          }
+          
+          // Ensure each node in next layer has at least one incoming edge
+          if (layer === numLayers - 2) {
+            for (const targetId of nextLayerNodes) {
+              const hasIncoming = gameState.edges.some(e => e.target === targetId);
+              if (!hasIncoming && currentLayerNodes.length > 0) {
+                // Pick a random source from previous layer
+                const randomSource = currentLayerNodes[Math.floor(Math.random() * currentLayerNodes.length)];
+                gameState.edges.push({source: randomSource, target: targetId});
+              }
+            }
+          }
+        }
+        
+        // Add layer labels
+        for (let layer = 0; layer < gameState.layers.length; layer++) {
+          const layerLabel = document.createElement('div');
+          layerLabel.className = 'layer-label';
+          layerLabel.textContent = `Layer ${layer + 1}`;
+          layerLabel.style.top = `${containerHeight / 2 - 10}px`;
+          layerLabel.style.left = `${layerSpacing * (layer + 1) - 25}px`;
+          container.appendChild(layerLabel);
+        }
+        
+        // Create node visuals
+        for (const node of gameState.nodes) {
+          const nodeDiv = document.createElement('div');
+          nodeDiv.className = 'node empty';
+          nodeDiv.id = `node-${node.id}`;
+          nodeDiv.textContent = `v${node.id}`;
+          nodeDiv.style.left = `${node.x - 25}px`;
+          nodeDiv.style.top = `${node.y - 25}px`;
+          
+          nodeDiv.dataset.nodeId = node.id;
+          nodeDiv.onclick = function(e) {
+            e.stopPropagation();
+            const clickedNodeId = parseInt(this.dataset.nodeId);
+            handleNodeClick(clickedNodeId);
+          };
+          
+          container.appendChild(nodeDiv);
+        }
+        
+        // Give free blue pebbles to source nodes
+        for (const node of gameState.nodes) {
+          const hasIncomingEdges = gameState.edges.some(edge => edge.target === node.id);
+          if (!hasIncomingEdges) {
+            gameState.bluePebbles.add(node.id);
+            updateNodeAppearance(node.id);
+          }
+        }
+        
+        // Draw edges
+        drawAllEdges();
+        
+        // Identify output nodes (sink nodes)
+        for (const node of gameState.nodes) {
+          const hasOutgoingEdges = gameState.edges.some(edge => edge.source === node.id);
+          if (!hasOutgoingEdges) {
+            const nodeDiv = document.getElementById(`node-${node.id}`);
+            if (nodeDiv) {
+              nodeDiv.classList.add('output');
+            }
+          }
+        }
+        
+        // Update status
+        document.getElementById('status-message').textContent = 
+          `DAG generated with ${gameState.nodes.length} nodes. Source nodes start with blue pebbles.`;
+        updateStatusPanel(null);
+        
+        // Remove any node highlights
+        document.querySelectorAll('.node').forEach(node => {
+          node.classList.remove('selected');
+        });
+      }
+      // Draw edges with arrows
+      function drawAllEdges() {
+        const container = document.getElementById('graph-container');
+        
+        const edgesAndArrows = container.querySelectorAll('.edge, .arrow');
+        edgesAndArrows.forEach(el => el.remove());
+        
+        for (const edge of gameState.edges) {
+          const source = gameState.nodes[edge.source];
+          const target = gameState.nodes[edge.target];
+          
+          const dx = target.x - source.x;
+          const dy = target.y - source.y;
+          const length = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+          
+          // Edge line - BLUE for marked edges
+          const edgeLength = length - 28;
+          const edgeDiv = document.createElement('div');
+          edgeDiv.className = 'edge';
+          if (isEdgeMarked(edge.source, edge.target)) {
+            edgeDiv.style.background = '#4dabf7'; // Blue for marked edges
+            edgeDiv.style.height = '3px';
+          } else {
+            edgeDiv.style.background = '#636e72'; // Gray for unmarked
+          }
+          edgeDiv.style.left = `${source.x}px`;
+          edgeDiv.style.top = `${source.y}px`;
+          edgeDiv.style.width = `${edgeLength}px`;
+          edgeDiv.style.transform = `rotate(${angle}deg)`;
+          container.appendChild(edgeDiv);
+          
+          // Arrowhead - same color as edge
+          const arrowDiv = document.createElement('div');
+          arrowDiv.className = 'arrow';
+          if (isEdgeMarked(edge.source, edge.target)) {
+            arrowDiv.style.background = '#4dabf7'; // Blue for marked edges
+          }
+          const arrowX = source.x + (dx / length) * (edgeLength - 8);
+          const arrowY = source.y + (dy / length) * (edgeLength - 8);
+          arrowDiv.style.left = `${arrowX - 6}px`;
+          arrowDiv.style.top = `${arrowY - 6}px`;
+          arrowDiv.style.transform = `rotate(${angle}deg)`;
+          container.appendChild(arrowDiv);
+        }
+      }
+
+      // Check if all incoming edges of a node are marked (including newly marked in current propagation)
+      function allIncomingEdgesMarked(nodeId, newlyMarkedEdges = new Set()) {
+        const incomingEdges = gameState.edges.filter(e => e.target === nodeId);
+        
+        // If node has no incoming edges (source node), condition is trivially true
+        if (incomingEdges.length === 0) {
+          return true;
+        }
+        
+        // Check each incoming edge
+        for (const edge of incomingEdges) {
+          const edgeKey = getEdgeKey(edge.source, edge.target);
+          if (!gameState.markedEdges.has(edgeKey) && !newlyMarkedEdges.has(edgeKey)) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      // Check if game is complete (Final State)
+      function checkGameCompletion() {
+        // Condition: All sink nodes have blue pebbles AND all edges are marked
+        const sinkNodes = gameState.nodes.filter(node => {
+          return !gameState.edges.some(edge => edge.source === node.id);
+        });
+        
+        // Check all sink nodes have blue
+        for (const node of sinkNodes) {
+          if (!gameState.bluePebbles.has(node.id)) {
+            return false;
+          }
+        }
+        
+        // Check all edges are marked
+        for (const edge of gameState.edges) {
+          if (!isEdgeMarked(edge.source, edge.target)) {
+            return false;
+          }
+        }
+        
+        return sinkNodes.length > 0;
+      }
+
+      // Calculate optimal moves (number of inputs + number of outputs)
+      function getOptimalMoves() {
+        const sourceNodes = gameState.nodes.filter(node => {
+          return !gameState.edges.some(edge => edge.target === node.id);
+        });
+        
+        const sinkNodes = gameState.nodes.filter(node => {
+          return !gameState.edges.some(edge => edge.source === node.id);
+        });
+        
+        return sourceNodes.length + sinkNodes.length;
+      }
+
+      // Show completion message with medal for optimal play
+      function showCompletionMessage() {
+        const sinkNodes = gameState.nodes.filter(node => {
+          return !gameState.edges.some(edge => edge.source === node.id);
+        });
+        const sinkNodeList = sinkNodes.map(node => `v${node.id}`).join(', ');
+        
+        const optimalMoves = getOptimalMoves();
+        const isOptimal = (gameState.moves === optimalMoves);
+        
+        let medalEmoji = '';
+        let medalMessage = '';
+        
+        if (isOptimal) {
+          medalEmoji = '🏆 ';
+          medalMessage = '\n\n✨ In fact, you achieved the theoretical lower bound of moves! PERFECT! ✨\n' +
+                        '🏅 GOLD MEDAL WINNER! 🏅';
+        }
+        
+        const winMessage = 
+          `${medalEmoji}🎉 CONGRATULATIONS! 🎉${medalEmoji}\n\n` +
+          `You completed the game in ${gameState.moves} moves!\n` +
+          `All sink nodes (${sinkNodeList}) have blue pebbles and all edges are marked.${medalMessage}`;
+        
+        alert(winMessage);
+        
+        // Update status with medal info
+        let statusMessage = `🎉 Game Complete! ${gameState.moves} moves. `;
+        if (isOptimal) {
+          statusMessage += `🏆 OPTIMAL! You're a champion! 🏆`;
+        } else {
+          statusMessage += `(Optimal: ${optimalMoves} moves)`;
+        }
+        document.getElementById('status-message').textContent = statusMessage;
+      }
+      
+      // Move 1: Place Blue (Save) - Now keeps Light Red copy
+      function placeBlue(nodeId) {
+        // Condition: Node must have Dark Red
+        if (!gameState.darkRedPebbles.has(nodeId)) {
+          alert('Cannot place Blue: Node must have Dark Red pebble first');
+          return false;
+        }
+        
+        // Effect: Add Blue, ADD Light Red, Remove Dark Red
+        gameState.bluePebbles.add(nodeId);
+        gameState.lightRedPebbles.add(nodeId);  // Keep a copy in fast memory
+        gameState.darkRedPebbles.delete(nodeId);
+        
+        // Update appearance - Dark Red is gone, now has both Blue and Light Red
+        // We show Light Red (since red takes precedence visually)
+        updateNodeAppearance(nodeId);
+        
+        // Propagate marking through the graph (Light Red can participate in computations)
+        const edgesMarked = markEligibleEdges(nodeId);
+        
+        if (edgesMarked > 0) {
+          drawAllEdges();
+        }
+        
+        return { 
+          success: true, 
+          cost: 1, 
+          message: `Saved v${nodeId} to slow memory (Dark Red → Blue + Light Red)` + 
+            (edgesMarked > 0 ? ` and triggered ${edgesMarked} edge marking${edgesMarked > 1 ? 's' : ''} in the graph` : '')
+        };
+      }
+
+      // Move 2: Place Light Red (Load)
+      function placeLightRed(nodeId) {
+        if (!gameState.bluePebbles.has(nodeId)) {
+          alert('Cannot place Light Red: Node must have Blue pebble first');
+          return false;
+        }
+        
+        const totalRed = gameState.lightRedPebbles.size + gameState.darkRedPebbles.size;
+        if (totalRed >= gameState.redLimit) {
+          alert(`Red pebble limit reached (${gameState.redLimit}). Delete some red pebbles first.`);
+          return false;
+        }
+        
+        gameState.lightRedPebbles.add(nodeId);
+        // gameState.bluePebbles.delete(nodeId);
+        
+        updateNodeAppearance(nodeId);
+        
+        // Propagate marking through the graph
+        const edgesMarked = markEligibleEdges(nodeId);
+        
+        if (edgesMarked > 0) {
+          drawAllEdges();
+        }
+        
+        const message = `Loaded v${nodeId} to fast memory (Blue → Light Red)` + 
+          (edgesMarked > 0 ? ` and triggered ${edgesMarked} edge marking${edgesMarked > 1 ? 's' : ''} in the graph` : '');
+        
+        return { success: true, cost: 1, message: message };
+      }
+
+      // Move 3i: Remove Light Red (Delete from fast memory) - Keeps blue
+      function deleteLightRed(nodeId) {
+        if (!gameState.lightRedPebbles.has(nodeId)) {
+          return false;
+        }
+        
+        // Remove Light Red, but keep Blue if present
+        gameState.lightRedPebbles.delete(nodeId);
+        
+        // If node also has Blue, it remains Blue
+        // If not, it becomes empty
+        updateNodeAppearance(nodeId);
+        
+        // Propagate marking (node might now be Blue or empty)
+        const edgesMarked = markEligibleEdges(nodeId);
+        
+        if (edgesMarked > 0) {
+          drawAllEdges();
+        }
+        
+        return { success: true, cost: 0, message: `Deleted Light Red from v${nodeId}` };
+      }
+
+      // Move 3ii: Remove Dark Red (Delete if all outputs marked) - CANNOT DELETE FROM OUTPUT NODES
+      function deleteDarkRed(nodeId) {
+        if (!gameState.darkRedPebbles.has(nodeId)) {
+          return false;
+        }
+        
+        // Check if this node is an output node (sink node with no outgoing edges)
+        const hasOutgoingEdges = gameState.edges.some(edge => edge.source === nodeId);
+        if (!hasOutgoingEdges) {
+          alert('Cannot delete Dark Red from output node - output nodes must end with Blue pebble');
+          return false;
+        }
+        
+        // Condition: All outgoing edges of node are marked
+        const outgoingEdges = gameState.edges.filter(e => e.source === nodeId);
+        for (const edge of outgoingEdges) {
+          if (!isEdgeMarked(edge.source, edge.target)) {
+            alert('Cannot delete Dark Red: Some outgoing edges are not marked yet');
+            return false;
+          }
+        }
+        
+        // Effect: Remove Dark Red (node becomes empty)
+        gameState.darkRedPebbles.delete(nodeId);
+        
+        updateNodeAppearance(nodeId);
+        
+        // Propagate marking (empty node doesn't qualify, but check anyway)
+        const edgesMarked = markEligibleEdges(nodeId);
+        
+        if (edgesMarked > 0) {
+          drawAllEdges();
+        }
+        
+        return { success: true, cost: 0, message: `Deleted Dark Red from v${nodeId} (all outputs marked)` };
+      }
+
+      // Move 4: Compute (Place Dark Red)
+      function computeNode(nodeId) {
+        const totalRed = gameState.lightRedPebbles.size + gameState.darkRedPebbles.size;
+        if (totalRed >= gameState.redLimit) {
+          alert(`Red pebble limit reached (${gameState.redLimit}). Delete some red pebbles first.`);
+          return false;
+        }
+        
+        const incomingEdges = gameState.edges.filter(e => e.target === nodeId);
+        if (incomingEdges.length === 0) {
+          alert('Source nodes cannot be computed');
+          return false;
+        }
+        
+        if (gameState.lightRedPebbles.has(nodeId) || 
+            gameState.darkRedPebbles.has(nodeId)) {
+          alert('Target node cannot have a red-pebble');
+          return false;
+        }
+        
+        // Check if at least one incoming edge qualifies
+        let atLeastOneQualified = false;
+        for (const edge of incomingEdges) {
+          if (isEdgeMarked(edge.source, edge.target)) continue;
+          if (!allIncomingEdgesMarked(edge.source)) continue;
+          
+          const sourcePebble = getPebbleType(edge.source);
+          if (sourcePebble === 'light-red' || sourcePebble === 'dark-red') {
+            atLeastOneQualified = true;
+            break;
+          }
+        }
+        
+        if (!atLeastOneQualified) {
+          alert('No incoming edges satisfy the conditions for compute');
+          return false;
+        }
+        
+        // Place Dark Red on target node
+        gameState.darkRedPebbles.add(nodeId);
+        updateNodeAppearance(nodeId);
+        
+        // Propagate marking through the entire graph starting from this node
+        const edgesMarked = markEligibleEdges(nodeId);
+        drawAllEdges();
+        
+        const message = `Computed v${nodeId} (free!)` + 
+          (edgesMarked > 0 ? ` and triggered ${edgesMarked} edge marking${edgesMarked > 1 ? 's' : ''} in the graph` : '');
+        
+        return { success: true, cost: 0, message: message };
+      }
+
+      // Propagate marking through the graph in topological order
+      function propagateMarking(startNodeId) {
+        // First, collect all nodes that might be affected
+        const nodesToProcess = new Set();
+        const queue = [startNodeId];
+        const newlyMarkedEdges = new Set(); // Track edges marked in this propagation
+        
+        // BFS to collect all reachable nodes
+        while (queue.length > 0) {
+          const currentId = queue.shift();
+          if (nodesToProcess.has(currentId)) continue;
+          nodesToProcess.add(currentId);
+          
+          // Add all neighbors
+          const neighbors = [
+            ...gameState.edges.filter(e => e.source === currentId).map(e => e.target),
+            ...gameState.edges.filter(e => e.target === currentId).map(e => e.source)
+          ];
+          
+          for (const neighborId of neighbors) {
+            if (!nodesToProcess.has(neighborId)) {
+              queue.push(neighborId);
+            }
+          }
+        }
+        
+        // Convert to array and sort by layer (topological order)
+        const sortedNodes = Array.from(nodesToProcess).sort((a, b) => {
+          const nodeA = gameState.nodes[a];
+          const nodeB = gameState.nodes[b];
+          return nodeA.layer - nodeB.layer; // Process lower layers first
+        });
+        
+        let totalEdgesMarked = 0;
+        let changed;
+        
+        // Keep iterating until no more edges can be marked
+        do {
+          changed = false;
+          
+          // Process nodes in topological order
+          for (const currentNodeId of sortedNodes) {
+            // Check all outgoing edges from this node
+            const outgoingEdges = gameState.edges.filter(e => e.source === currentNodeId);
+            
+            for (const edge of outgoingEdges) {
+              const edgeKey = getEdgeKey(edge.source, edge.target);
+              
+              // Skip if already marked
+              if (gameState.markedEdges.has(edgeKey) || newlyMarkedEdges.has(edgeKey)) {
+                continue;
+              }
+              
+              // Source must have Light Red or Dark Red
+              const sourcePebble = getPebbleType(edge.source);
+              if (sourcePebble !== 'light-red' && sourcePebble !== 'dark-red') continue;
+              
+              // Target must have Light Red or Dark Red
+              const targetPebble = getPebbleType(edge.target);
+              if (targetPebble !== 'light-red' && targetPebble !== 'dark-red') continue;
+              
+              // All incoming edges of source must be marked (including newly marked)
+              if (!allIncomingEdgesMarked(edge.source, newlyMarkedEdges)) continue;
+              
+              // Edge qualifies! Mark it
+              newlyMarkedEdges.add(edgeKey);
+              totalEdgesMarked++;
+              changed = true;
+              
+              // When an edge is marked, the target node must become Dark Red
+              // Remove any existing pebbles on target
+              gameState.bluePebbles.delete(edge.target);
+              gameState.lightRedPebbles.delete(edge.target);
+              // Add Dark Red (if not already present)
+              gameState.darkRedPebbles.add(edge.target);
+              
+              // Update target node appearance
+              updateNodeAppearance(edge.target);
+            }
+          }
+        } while (changed); // Repeat until no new edges are marked
+        
+        // Add all newly marked edges to the game state
+        for (const edgeKey of newlyMarkedEdges) {
+          gameState.markedEdges.add(edgeKey);
+        }
+        
+        return totalEdgesMarked;
+      }
+
+      // Update markEligibleEdges to use propagation
+      function markEligibleEdges(nodeId) {
+        const totalEdgesMarked = propagateMarking(nodeId);
+        return totalEdgesMarked;
+      }
+
+      // Handle node clicks
+      function handleNodeClick(nodeId) {
+        console.log(`Node clicked: ${nodeId}, Mode: ${gameState.mode}`);
+        
+        const nodeDiv = document.getElementById(`node-${nodeId}`);
+        if (!nodeDiv) return;
+        
+        // Remove highlight from all nodes
+        document.querySelectorAll('.node').forEach(node => {
+          node.classList.remove('selected');
+        });
+        
+        // Highlight selected node
+        nodeDiv.classList.add('selected');
+        gameState.selectedNode = nodeId;
+        
+        // Handle mark-edge mode specially (needs two clicks)
+        if (gameState.mode === 'mark-edge') {
+          if (gameState.awaitingSource) {
+            // First click: select source node
+            gameState.edgeSource = nodeId;
+            gameState.awaitingSource = false;
+            document.getElementById('status-message').textContent = 
+              `Source v${nodeId} selected. Now click on target node.`;
+            return;
+          } else {
+            // Second click: target node
+            const sourceId = gameState.edgeSource;
+            const targetId = nodeId;
+            
+            // Execute mark edge
+            const result = markEdge(sourceId, targetId);
+            
+            if (result) {
+              gameState.moves += result.cost;
+              updateCounter();
+              document.getElementById('status-message').textContent = result.message;
+              
+              // Check game completion
+              // After any successful move, check if game is complete
+              if (checkGameCompletion()) {
+                setTimeout(() => {
+                  showCompletionMessage();
+                }, 100);
+              }
+            }
+            
+            // Reset mark-edge mode
+            gameState.mode = 'none';
+            gameState.awaitingSource = false;
+            gameState.edgeSource = null;
+            return;
+          }
+        }
+        
+        // Regular mode: execute action based on current mode
+        if (gameState.mode !== 'none') {
+          let result = false;
+          
+          switch(gameState.mode) {
+            case 'place-blue':
+              result = placeBlue(nodeId);
+              break;
+            case 'place-light-red':
+              result = placeLightRed(nodeId);
+              break;
+            case 'compute':
+              result = computeNode(nodeId);
+              break;
+            case 'delete':
+              // Try both delete cases
+              result = deleteLightRed(nodeId);
+              if (!result) {
+                result = deleteDarkRed(nodeId);
+              }
+              if (!result) {
+                alert('No pebble to delete or conditions not met');
+              }
+              break;
+          }
+          
+          if (result) {
+            gameState.moves += result.cost;
+            updateCounter();
+            document.getElementById('status-message').textContent = result.message;
+            
+            // Check game completion
+            // After any successful move, check if game is complete
+            if (checkGameCompletion()) {
+              setTimeout(() => {
+                showCompletionMessage();
+              }, 100);
+            }
+          }
+          
+          // Reset mode after action
+          gameState.mode = 'none';
+        } else {
+          // Just selecting a node
+          const pebbleType = getPebbleType(nodeId);
+          document.getElementById('status-message').textContent = 
+            `Node v${nodeId} selected (${pebbleType} pebble). Choose an action from above.`;
+        }
+        
+        // Update selected node indicator
+        const indicator = document.getElementById('selected-node-indicator');
+        const pebbleType = getPebbleType(nodeId);
+        indicator.style.display = 'inline-flex';
+        indicator.innerHTML = `
+          <span class="node-state-badge ${pebbleType}"></span>
+          Selected: <strong>v${nodeId}</strong> (${pebbleType} pebble)
+        `;
+      }
+
+      // Update status panel (placeholder)
+      function updateStatusPanel(nodeId) {
+        // Can be expanded later
+      }
+
+      // Update move counter
+      function updateCounter() {
+        document.getElementById('move-counter').textContent = gameState.moves;
+      }
+
+      // Initialize on load
+      window.onload = function() {
+        generateLayeredDAG();
+      };
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (gameState.nodes.length > 0) {
+          setTimeout(generateLayeredDAG, 100);
+        }
+      });
+    </script>
+    <div class="rules">
+      <h3>Game Rules:</h3>
+      <ol>
+        <li><strong>Generate DAG</strong>: Creates a directed acyclic graph with nodes in layers</li>
+        <li><strong>Moves:</strong><ul>
+        <li><strong>Place Blue & L. Red (SAVE)</strong>: Place a Blue and a Light-Red pebble on any node that has a Dark-Red pebble. <strong>Cost: 1 move</strong></li>
+        <li><strong>Place L. Red (LOAD)</strong>: Place a Light-Red pebble on a node that has a Blue pebble. <strong>Cost: 1 move</strong></li>
+        <li><strong>Place D. Red (COMPUTE)</strong>: Place a Dark-Red pebble on a vertex that has at least one predecessor with a Red Pebble (Light or Dark) <strong>Cost: 0 moves</strong></li>
+        <li><strong>Remove Red (DELETE)</strong>: Remove a Light-Red pebble from any node, or a Dark-Red pebble from a node where all of its outgoing edges are marked. <strong>Cost: 0 moves</strong></li>
+        </ul></li>
+        <li><strong>Marking Edges</strong>: An unmarked edge (u,v) is automatically marked when both u and v have Red pebbles (Light or Dark). All the pebbles on v are replaced with a Dark-Red pebble.</li>
+        <li><strong>Initial State</strong>: Source nodes (no incoming edges) start with blue pebbles</li>
+        <li><strong>Memory Limits</strong>: Red pebbles limited, Blue pebbles unlimited</li>
+        <li><strong>Goal</strong>: Cover all output nodes with Blue pebbles, and mark all edges in the graph, using minimal number of moves</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>
