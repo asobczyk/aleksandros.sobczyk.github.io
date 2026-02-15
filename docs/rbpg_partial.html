@@ -685,7 +685,6 @@ https://deepseek.com </p>
         for (let layer = 0; layer < gameState.layers.length; layer++) {
           const layerLabel = document.createElement('div');
           layerLabel.className = 'layer-label';
-          layerLabel.textContent = `Layer ${layer + 1}`;
           layerLabel.style.top = `${containerHeight / 2 - 10}px`;
           layerLabel.style.left = `${layerSpacing * (layer + 1) - 25}px`;
           container.appendChild(layerLabel);
