@@ -478,8 +478,8 @@ https://deepseek.com </p>
         <div id="actions-container" class="actions-container">
           <!-- Action buttons with updated text and solid colors -->
           <button class="action-button place-blue" onclick="setMode('place-blue')">Place Blue & L. Red</button>
-          <button class="action-button place-light-red" onclick="setMode('place-light-red')">Place L. Red</button>
-          <button class="action-button place-dark-red" onclick="setMode('compute')">Place D. Red</button>
+          <button class="action-button place-light-red" onclick="setMode('place-light-red')">Place Light-Red</button>
+          <button class="action-button place-dark-red" onclick="setMode('compute')">Place Dark-Red</button>
           <button class="action-button delete-red" onclick="setMode('delete')">Remove Red</button>
         </div>
       </div>
@@ -1294,8 +1294,8 @@ https://deepseek.com </p>
         <li><strong>Generate DAG</strong>: Creates a directed acyclic graph with nodes in layers</li>
         <li><strong>Moves:</strong><ul>
         <li><strong>Place Blue & L. Red (SAVE)</strong>: Place a Blue and a Light-Red pebble on any node that has a Dark-Red pebble. <strong>Cost: 1 move</strong></li>
-        <li><strong>Place L. Red (LOAD)</strong>: Place a Light-Red pebble on a node that has a Blue pebble. <strong>Cost: 1 move</strong></li>
-        <li><strong>Place D. Red (COMPUTE)</strong>: Place a Dark-Red pebble on a vertex that has at least one predecessor with a Red Pebble (Light or Dark) <strong>Cost: 0 moves</strong></li>
+        <li><strong>Place Light-Red (LOAD)</strong>: Place a Light-Red pebble on a node that has a Blue pebble. <strong>Cost: 1 move</strong></li>
+        <li><strong>Place Dark-Red (COMPUTE)</strong>: Place a Dark-Red pebble on a vertex that has at least one predecessor with a Red Pebble (Light or Dark) <strong>Cost: 0 moves</strong></li>
         <li><strong>Remove Red (DELETE)</strong>: Remove a Light-Red pebble from any node, or a Dark-Red pebble from a node where all of its outgoing edges are marked. <strong>Cost: 0 moves</strong></li>
         </ul></li>
         <li><strong>Marking Edges</strong>: An unmarked edge (u,v) is automatically marked when both u and v have Red pebbles (Light or Dark). All the pebbles on v are replaced with a Dark-Red pebble.</li>
