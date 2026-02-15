@@ -56,8 +56,8 @@ Proceedings of the 37th ACM Symposium on Parallelism in Algorithms and Architect
     
     /* Controls area styling */
     .controls {
-      margin: 25px 0;
-      padding: 20px;
+      margin: 25px 0 15px 0;
+      padding: 15px 20px;
       background: #f8fafc;
       border-radius: 8px;
       display: flex;
@@ -67,6 +67,20 @@ Proceedings of the 37th ACM Symposium on Parallelism in Algorithms and Architect
       justify-content: space-between;
       border: 1px solid #e9ecef;
     }
+
+    .controls-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .controls-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
     
     .limit-control {
       display: flex;
@@ -230,8 +244,52 @@ Proceedings of the 37th ACM Symposium on Parallelism in Algorithms and Architect
       background: #f8f9fa;
       border-top: 1px solid #e9ecef;
     }
+    /* Action buttons container - directly under controls */
+    .action-buttons-container {
+      margin: 0 0 20px 0;
+      padding: 15px 20px;
+      background: #f8fafc;
+      border-radius: 8px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      border: 1px solid #e9ecef;
+    }
     
-    /* Action buttons - solid colors, white text */
+    .status-message-container {
+      margin: 20px 0 0 0;
+      padding: 15px 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid #e9ecef;
+      min-height: 60px;
+    }
+
+    .status-text {
+      color: #495057;
+      font-size: 1em;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .selected-node-indicator {
+      background: #e7f5ff;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      color: #1971c2;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    /* Update action button styles to match new container */
     .action-button {
       padding: 10px 20px;
       border: 2px solid transparent;
@@ -246,6 +304,12 @@ Proceedings of the 37th ACM Symposium on Parallelism in Algorithms and Architect
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       color: white;
     }
+
+    /* Remove old status panel styles */
+    .status-panel {
+      display: none;
+    }
+
     
     .action-button.place-blue {
       background: #4dabf7;
@@ -459,34 +523,36 @@ https://deepseek.com </p>
         </div>
       </div>
       
-      <!-- Controls (only Generate and Red Limit) -->
+      <!-- Controls (Generate button and Red Limit) -->
       <div class="controls">
-        <div class="limit-control">
-          <label for="red-limit">Max Red Pebbles:</label>
-          <input type="number" id="red-limit" min="2" max="10" value="4">
+        <div class="controls-left">
+          <div class="limit-control">
+            <label for="red-limit">Red Pebbles:</label>
+            <input type="number" id="red-limit" min="2" max="10" value="4">
+          </div>
+          <button class="btn-generate" onclick="generateLayeredDAG()">Generate Layered DAG</button>
         </div>
-        <button class="btn-generate" onclick="generateLayeredDAG()">Generate DAG</button>
-        <div class="counter">Moves: <span id="move-counter">0</span></div>
-      </div>
-
-      <!-- Unified Status & Actions Panel (above DAG) -->
-      <div id="status-panel" class="status-panel">
-        <div class="status-header">
-          <span id="status-message">Click "Generate DAG" to start!</span>
-          <span id="selected-node-indicator" class="selected-node-indicator" style="display: none;"></span>
-        </div>
-        <div id="actions-container" class="actions-container">
-          <!-- Action buttons with updated text and solid colors -->
-          <button class="action-button place-blue" onclick="setMode('place-blue')">Place Blue & L. Red</button>
-          <button class="action-button place-light-red" onclick="setMode('place-light-red')">Place Light-Red</button>
-          <button class="action-button place-dark-red" onclick="setMode('compute')">Place Dark-Red</button>
-          <button class="action-button delete-red" onclick="setMode('delete')">Remove Red</button>
+        <div class="controls-right">
+          <div class="counter">Moves: <span id="move-counter">0</span></div>
         </div>
       </div>
 
-      
+      <!-- Action buttons - right under Generate button, in same container -->
+      <div class="action-buttons-container">
+        <button class="action-button place-blue" onclick="setMode('place-blue')">Place Blue & L. Red</button>
+        <button class="action-button place-light-red" onclick="setMode('place-light-red')">Place Light-Red</button>
+        <button class="action-button place-dark-red" onclick="setMode('compute')">Place Dark-Red</button>
+        <button class="action-button delete-red" onclick="setMode('delete')">Delete Red</button>
+      </div>
+
       <!-- Graph Container -->
       <div id="graph-container"></div>
+
+      <!-- Status message - under graph container -->
+      <div class="status-message-container">
+        <div class="selected-node-indicator" id="selected-node-indicator" style="display: none;"></div>
+        <div class="status-text" id="status-message">Click "Generate Layered DAG" to start!</div>
+      </div>
     </div>
   
     <script>
@@ -528,7 +594,8 @@ https://deepseek.com </p>
           'compute': '.place-dark-red',
           'delete': '.delete-red'
         };
-        
+        document.getElementById('status-message').textContent = modeMessages[mode] || 'Select a node';
+
         const activeButton = document.querySelector(buttonClass[mode]);
         if (activeButton) {
           activeButton.classList.add('active-mode');
@@ -579,12 +646,6 @@ https://deepseek.com </p>
         } else {
           nodeDiv.classList.add('empty');
         }
-      }
-
-      // Update edge appearance based on marked status
-      function updateEdgeAppearance(source, target) {
-        // This would require storing edge DOM elements - we'll implement later
-        // For now, we'll just track in state
       }
 
       // Generate a layered DAG 
@@ -735,7 +796,7 @@ https://deepseek.com </p>
         // Update status
         document.getElementById('status-message').textContent = 
           `DAG generated with ${gameState.nodes.length} nodes. Inputs start with blue pebbles.`;
-        updateStatusPanel(null);
+        updateStatusMessage(`DAG generated with ${gameState.nodes.length} nodes. Source nodes start with blue pebbles.`, null);
         
         // Remove any node highlights
         document.querySelectorAll('.node').forEach(node => {
@@ -938,7 +999,7 @@ https://deepseek.com </p>
           drawAllEdges();
         }
         
-        const message = `Loaded v${nodeId} to fast memory (Blue → Light Red)` + 
+        const message = `Loaded v${nodeId} (Blue → Light Red)` + 
           (edgesMarked > 0 ? ` and marked ${edgesMarked} edge${edgesMarked > 1 ? 's' : ''}` : '');
         
         return { success: true, cost: 1, message: message };
@@ -1168,45 +1229,6 @@ https://deepseek.com </p>
         nodeDiv.classList.add('selected');
         gameState.selectedNode = nodeId;
         
-        // // Handle mark-edge mode specially (needs two clicks)
-        // if (gameState.mode === 'mark-edge') {
-        //   if (gameState.awaitingSource) {
-        //     // First click: select source node
-        //     gameState.edgeSource = nodeId;
-        //     gameState.awaitingSource = false;
-        //     document.getElementById('status-message').textContent = 
-        //       `Source v${nodeId} selected. Now click on target node.`;
-        //     return;
-        //   } else {
-        //     // Second click: target node
-        //     const sourceId = gameState.edgeSource;
-        //     const targetId = nodeId;
-            
-        //     // Execute mark edge
-        //     const result = markEdge(sourceId, targetId);
-            
-        //     if (result) {
-        //       gameState.moves += result.cost;
-        //       updateCounter();
-        //       document.getElementById('status-message').textContent = result.message;
-              
-        //       // Check game completion
-        //       // After any successful move, check if game is complete
-        //       if (checkGameCompletion()) {
-        //         setTimeout(() => {
-        //           showCompletionMessage();
-        //         }, 100);
-        //       }
-        //     }
-            
-        //     // Reset mark-edge mode
-        //     gameState.mode = 'none';
-        //     gameState.awaitingSource = false;
-        //     gameState.edgeSource = null;
-        //     return;
-        //   }
-        // }
-        
         // Regular mode: execute action based on current mode
         if (gameState.mode !== 'none') {
           let result = false;
@@ -1266,9 +1288,21 @@ https://deepseek.com </p>
         `;
       }
 
-      // Update status panel (placeholder)
-      function updateStatusPanel(nodeId) {
-        // Can be expanded later
+      // Update status message and selected node indicator
+      function updateStatusMessage(message, nodeId = null) {
+        document.getElementById('status-message').textContent = message;
+        
+        const indicator = document.getElementById('selected-node-indicator');
+        if (nodeId !== null) {
+          const pebbleType = getPebbleType(nodeId);
+          indicator.style.display = 'inline-flex';
+          indicator.innerHTML = `
+            <span class="node-state-badge ${pebbleType}"></span>
+            Selected: <strong>v${nodeId}</strong> (${pebbleType} pebble)
+          `;
+        } else {
+          indicator.style.display = 'none';
+        }
       }
 
       // Update move counter
