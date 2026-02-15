@@ -734,7 +734,7 @@ https://deepseek.com </p>
         
         // Update status
         document.getElementById('status-message').textContent = 
-          `DAG generated with ${gameState.nodes.length} nodes. Source nodes start with blue pebbles.`;
+          `DAG generated with ${gameState.nodes.length} nodes. Inputs start with blue pebbles.`;
         updateStatusPanel(null);
         
         // Remove any node highlights
@@ -909,7 +909,7 @@ https://deepseek.com </p>
           success: true, 
           cost: 1, 
           message: `Saved v${nodeId} to slow memory (Dark Red → Blue + Light Red)` + 
-            (edgesMarked > 0 ? ` and triggered ${edgesMarked} edge marking${edgesMarked > 1 ? 's' : ''} in the graph` : '')
+            (edgesMarked > 0 ? ` and marked ${edgesMarked} edge${edgesMarked > 1 ? 's' : ''}` : '')
         };
       }
 
@@ -939,7 +939,7 @@ https://deepseek.com </p>
         }
         
         const message = `Loaded v${nodeId} to fast memory (Blue → Light Red)` + 
-          (edgesMarked > 0 ? ` and triggered ${edgesMarked} edge marking${edgesMarked > 1 ? 's' : ''} in the graph` : '');
+          (edgesMarked > 0 ? ` and marked ${edgesMarked} edge${edgesMarked > 1 ? 's' : ''}` : '');
         
         return { success: true, cost: 1, message: message };
       }
@@ -1001,7 +1001,7 @@ https://deepseek.com </p>
           drawAllEdges();
         }
         
-        return { success: true, cost: 0, message: `Deleted Dark Red from v${nodeId} (all outputs marked)` };
+        return { success: true, cost: 0, message: `Deleted Dark Red from v${nodeId}` };
       }
 
       // Move 4: Compute (Place Dark Red)
@@ -1051,7 +1051,7 @@ https://deepseek.com </p>
         drawAllEdges();
         
         const message = `Computed v${nodeId} (free!)` + 
-          (edgesMarked > 0 ? ` and triggered ${edgesMarked} edge marking${edgesMarked > 1 ? 's' : ''} in the graph` : '');
+          (edgesMarked > 0 ? ` and marked ${edgesMarked} edge${edgesMarked > 1 ? 's' : ''}` : '');
         
         return { success: true, cost: 0, message: message };
       }
@@ -1168,44 +1168,44 @@ https://deepseek.com </p>
         nodeDiv.classList.add('selected');
         gameState.selectedNode = nodeId;
         
-        // Handle mark-edge mode specially (needs two clicks)
-        if (gameState.mode === 'mark-edge') {
-          if (gameState.awaitingSource) {
-            // First click: select source node
-            gameState.edgeSource = nodeId;
-            gameState.awaitingSource = false;
-            document.getElementById('status-message').textContent = 
-              `Source v${nodeId} selected. Now click on target node.`;
-            return;
-          } else {
-            // Second click: target node
-            const sourceId = gameState.edgeSource;
-            const targetId = nodeId;
+        // // Handle mark-edge mode specially (needs two clicks)
+        // if (gameState.mode === 'mark-edge') {
+        //   if (gameState.awaitingSource) {
+        //     // First click: select source node
+        //     gameState.edgeSource = nodeId;
+        //     gameState.awaitingSource = false;
+        //     document.getElementById('status-message').textContent = 
+        //       `Source v${nodeId} selected. Now click on target node.`;
+        //     return;
+        //   } else {
+        //     // Second click: target node
+        //     const sourceId = gameState.edgeSource;
+        //     const targetId = nodeId;
             
-            // Execute mark edge
-            const result = markEdge(sourceId, targetId);
+        //     // Execute mark edge
+        //     const result = markEdge(sourceId, targetId);
             
-            if (result) {
-              gameState.moves += result.cost;
-              updateCounter();
-              document.getElementById('status-message').textContent = result.message;
+        //     if (result) {
+        //       gameState.moves += result.cost;
+        //       updateCounter();
+        //       document.getElementById('status-message').textContent = result.message;
               
-              // Check game completion
-              // After any successful move, check if game is complete
-              if (checkGameCompletion()) {
-                setTimeout(() => {
-                  showCompletionMessage();
-                }, 100);
-              }
-            }
+        //       // Check game completion
+        //       // After any successful move, check if game is complete
+        //       if (checkGameCompletion()) {
+        //         setTimeout(() => {
+        //           showCompletionMessage();
+        //         }, 100);
+        //       }
+        //     }
             
-            // Reset mark-edge mode
-            gameState.mode = 'none';
-            gameState.awaitingSource = false;
-            gameState.edgeSource = null;
-            return;
-          }
-        }
+        //     // Reset mark-edge mode
+        //     gameState.mode = 'none';
+        //     gameState.awaitingSource = false;
+        //     gameState.edgeSource = null;
+        //     return;
+        //   }
+        // }
         
         // Regular mode: execute action based on current mode
         if (gameState.mode !== 'none') {
